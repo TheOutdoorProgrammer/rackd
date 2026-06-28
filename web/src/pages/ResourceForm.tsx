@@ -20,6 +20,7 @@ function buildPayload(cfg: ResourceConfig, values: Record<string, any>): Record<
     if (f.type === 'money') p[f.name] = dollarsToCents(String(values[f.name] ?? ''))
     else if (f.type === 'number') p[f.name] = Number(values[f.name]) || 0
     else if (f.type === 'bool') p[f.name] = !!values[f.name]
+    else if (f.type === 'multiCheck') p[f.name] = Array.isArray(values[f.name]) ? values[f.name] : []
   }
   return p
 }
@@ -70,9 +71,11 @@ export default function ResourceForm() {
       {cfg.key === 'firearms' && (
         <SpecLookup onFill={(fields) => setValues((prev) => ({ ...prev, ...fields }))} />
       )}
-      {cfg.fields.map((f) => (
-        <FieldInput key={f.name} field={f} value={values[f.name]} firearms={firearms} onChange={(v) => set(f.name, v)} />
-      ))}
+      {cfg.fields
+        .filter((f) => !f.showIf || f.showIf(values))
+        .map((f) => (
+          <FieldInput key={f.name} field={f} value={values[f.name]} firearms={firearms} onChange={(v) => set(f.name, v)} />
+        ))}
       {err && <p className="text-sm text-dracula-red">{err}</p>}
       <div className="flex gap-2 pt-2">
         <button type="submit" disabled={busy} className="rounded-lg bg-dracula-purple px-4 py-2 font-medium text-dracula-bg disabled:opacity-50">
@@ -141,6 +144,8 @@ function FieldInput({
       return <label className="block">{label}<input type="date" value={value ?? ''} onChange={(e) => onChange(e.target.value)} className={inputCls} /></label>
     case 'combo':
       return <ComboField field={field} value={value} onChange={onChange} />
+    case 'multiCheck':
+      return <MultiCheckField field={field} value={value} onChange={onChange} />
     default:
       return <label className="block">{label}<input type="text" value={value ?? ''} onChange={(e) => onChange(e.target.value)} className={inputCls} /></label>
   }
@@ -190,5 +195,36 @@ function ComboField({ field, value, onChange }: { field: Field; value: any; onCh
         />
       )}
     </label>
+  )
+}
+
+// MultiCheckField is a set of toggle chips for picking several values (e.g. the
+// shell lengths a shotgun's chamber supports). Stores a string[].
+function MultiCheckField({ field, value, onChange }: { field: Field; value: any; onChange: (v: any) => void }) {
+  const selected: string[] = Array.isArray(value) ? value : []
+  const toggle = (v: string) =>
+    onChange(selected.includes(v) ? selected.filter((x) => x !== v) : [...selected, v])
+
+  return (
+    <div className="block">
+      <span className="mb-1 block text-xs uppercase tracking-wider text-dracula-comment">{field.label}</span>
+      <div className="flex flex-wrap gap-2">
+        {(field.options ?? []).map((o) => {
+          const on = selected.includes(o.value)
+          return (
+            <button
+              type="button"
+              key={o.value}
+              onClick={() => toggle(o.value)}
+              className={`rounded-lg border px-3 py-1.5 text-sm ${
+                on ? 'border-dracula-purple bg-dracula-purple/20 text-dracula-fg' : 'border-dracula-current text-dracula-comment'
+              }`}
+            >
+              {o.label}
+            </button>
+          )
+        })}
+      </div>
+    </div>
   )
 }

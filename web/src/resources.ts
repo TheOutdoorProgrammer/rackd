@@ -1,13 +1,14 @@
 import { titleCase } from './format'
 import { COMMON_CALIBERS } from './ammoseek'
 
-export type FieldType = 'text' | 'number' | 'money' | 'date' | 'textarea' | 'select' | 'bool' | 'firearmRef' | 'combo'
+export type FieldType = 'text' | 'number' | 'money' | 'date' | 'textarea' | 'select' | 'bool' | 'firearmRef' | 'combo' | 'multiCheck'
 
 export interface Field {
   name: string
   label: string
   type?: FieldType
   options?: { value: string; label: string }[]
+  showIf?: (item: any) => boolean
 }
 
 export interface ResourceConfig {
@@ -62,6 +63,7 @@ export const RESOURCES: Record<string, ResourceConfig> = {
       { name: 'model', label: 'Model' },
       { name: 'kind', label: 'Type', type: 'select', options: opts(['pistol', 'rifle', 'shotgun', 'nfa', 'other']) },
       { name: 'caliber', label: 'Caliber', type: 'combo', options: caliberOptions },
+      { name: 'shellLengths', label: 'Shell lengths (chamber)', type: 'multiCheck', options: shellLengthOptions, showIf: (f) => f.kind === 'shotgun' },
       { name: 'serialNumber', label: 'Serial number' },
       { name: 'finish', label: 'Finish' },
       { name: 'status', label: 'Status', type: 'select', options: opts(['owned', 'sold', 'loaned', 'pending']) },

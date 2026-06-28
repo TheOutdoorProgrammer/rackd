@@ -5,24 +5,25 @@ package db
 
 // Firearm is a single firearm or NFA item.
 type Firearm struct {
-	ID                 int64  `json:"id"`
-	Nickname           string `json:"nickname"`
-	Manufacturer       string `json:"manufacturer"`
-	Model              string `json:"model"`
-	Kind               string `json:"kind"` // pistol | rifle | shotgun | nfa | other
-	Caliber            string `json:"caliber"`
-	SerialNumber       string `json:"serialNumber"`
-	Finish             string `json:"finish"`
-	AcquiredDate       string `json:"acquiredDate"`
-	AcquiredPriceCents int64  `json:"acquiredPriceCents"`
-	AcquiredFrom       string `json:"acquiredFrom"`
-	Status             string `json:"status"` // owned | sold | loaned | pending
-	IsNFA              bool   `json:"isNfa"`
-	NFAType            string `json:"nfaType"` // suppressor | sbr | sbs | mg | aow
-	TaxStampDate       string `json:"taxStampDate"`
-	Notes              string `json:"notes"`
-	CreatedAt          string `json:"createdAt"`
-	UpdatedAt          string `json:"updatedAt"`
+	ID                 int64    `json:"id"`
+	Nickname           string   `json:"nickname"`
+	Manufacturer       string   `json:"manufacturer"`
+	Model              string   `json:"model"`
+	Kind               string   `json:"kind"` // pistol | rifle | shotgun | nfa | other
+	Caliber            string   `json:"caliber"`
+	ShellLengths       []string `json:"shellLengths"` // shotgun chamber: supported shell lengths
+	SerialNumber       string   `json:"serialNumber"`
+	Finish             string   `json:"finish"`
+	AcquiredDate       string   `json:"acquiredDate"`
+	AcquiredPriceCents int64    `json:"acquiredPriceCents"`
+	AcquiredFrom       string   `json:"acquiredFrom"`
+	Status             string   `json:"status"` // owned | sold | loaned | pending
+	IsNFA              bool     `json:"isNfa"`
+	NFAType            string   `json:"nfaType"` // suppressor | sbr | sbs | mg | aow
+	TaxStampDate       string   `json:"taxStampDate"`
+	Notes              string   `json:"notes"`
+	CreatedAt          string   `json:"createdAt"`
+	UpdatedAt          string   `json:"updatedAt"`
 }
 
 // Ammo is a line of ammunition stock.

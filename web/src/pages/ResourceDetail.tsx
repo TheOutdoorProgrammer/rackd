@@ -10,6 +10,7 @@ import type { Item } from '../types'
 
 function formatValue(f: Field, v: any): string {
   if (v === null || v === undefined || v === '') return ''
+  if (Array.isArray(v)) return v.length ? v.join(', ') : ''
   if (f.type === 'money') return v ? money(v) : ''
   if (f.type === 'bool') return v ? 'Yes' : ''
   if (f.type === 'firearmRef') return v ? `#${v}` : ''
