@@ -72,7 +72,7 @@ type Accessory struct {
 	ID           int64  `json:"id"`
 	FirearmID    *int64 `json:"firearmId"`
 	Name         string `json:"name"`
-	Category     string `json:"category"` // optic | light | laser | sling | magazine | trigger | stock | case | cleaning | other
+	Category     string `json:"category"` // optic | light | laser | sling | magazine | trigger | stock | choke | case | cleaning | other
 	Manufacturer string `json:"manufacturer"`
 	Model        string `json:"model"`
 	SerialNumber string `json:"serialNumber"`

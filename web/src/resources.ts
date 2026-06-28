@@ -132,7 +132,7 @@ export const RESOURCES: Record<string, ResourceConfig> = {
     emoji: '🔭',
     fields: [
       { name: 'name', label: 'Name' },
-      { name: 'category', label: 'Category', type: 'select', options: opts(['optic', 'light', 'laser', 'sling', 'magazine', 'trigger', 'stock', 'case', 'cleaning', 'other']) },
+      { name: 'category', label: 'Category', type: 'select', options: opts(['optic', 'light', 'laser', 'sling', 'magazine', 'trigger', 'stock', 'choke', 'case', 'cleaning', 'other']) },
       { name: 'manufacturer', label: 'Manufacturer' },
       { name: 'model', label: 'Model' },
       { name: 'serialNumber', label: 'Serial number' },
