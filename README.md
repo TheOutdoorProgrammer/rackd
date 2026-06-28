@@ -18,6 +18,16 @@ Everything — serial numbers, photos, the whole list — is encrypted at rest a
 
 ---
 
+## Screenshots
+
+<p align="center">
+  <img src="docs/screenshots/unlock.jpeg" width="240" alt="PIN unlock screen">
+  &nbsp;
+  <img src="docs/screenshots/firearms-list.jpeg" width="240" alt="Firearms list with cover photos and shell sizes">
+  &nbsp;
+  <img src="docs/screenshots/firearm-detail.jpeg" width="240" alt="Firearm detail with photos, linked ammo and accessories, and an AmmoSeek restock link">
+</p>
+
 ## Why
 
 Existing trackers either do one thing (just ammo, or just guns) or bury a simple inventory under range-drill analytics and export pipelines. rackd is the lean, unified core — catalog what you own, attach photos, note where you got it — with **real at-rest encryption** so the data is useless to anyone who doesn't have your PIN.
