@@ -189,6 +189,36 @@ func (s *Server) handleSetCover(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// handleRotatePhoto turns a photo 90° clockwise per call, rewriting both the
+// full image and its thumbnail in place.
+func (s *Server) handleRotatePhoto(w http.ResponseWriter, r *http.Request) {
+	a := s.loadAttachment(w, r)
+	if a == nil {
+		return
+	}
+	full, err := s.readDecrypted(a.StoredPath)
+	if err != nil {
+		serverError(w, err)
+		return
+	}
+	out, err := images.Rotate(full, 90, thumbMax)
+	if err != nil {
+		writeError(w, http.StatusBadRequest, "could not rotate image")
+		return
+	}
+	if err := s.writeEncrypted(a.StoredPath, out.Full); err != nil {
+		serverError(w, err)
+		return
+	}
+	if a.ThumbPath != "" {
+		if err := s.writeEncrypted(a.ThumbPath, out.Thumb); err != nil {
+			serverError(w, err)
+			return
+		}
+	}
+	writeJSON(w, http.StatusOK, map[string]bool{"ok": true})
+}
+
 // --- helpers ---
 
 func (s *Server) loadAttachment(w http.ResponseWriter, r *http.Request) *db.Attachment {
@@ -217,13 +247,16 @@ func (s *Server) writeEncrypted(name string, data []byte) error {
 	return os.WriteFile(filepath.Join(s.uploadsDir(), name), enc, 0o600)
 }
 
-func (s *Server) serveEncrypted(w http.ResponseWriter, name string) {
+func (s *Server) readDecrypted(name string) ([]byte, error) {
 	enc, err := os.ReadFile(filepath.Join(s.uploadsDir(), name))
 	if err != nil {
-		serverError(w, err)
-		return
+		return nil, err
 	}
-	data, err := s.vault.Decrypt(enc)
+	return s.vault.Decrypt(enc)
+}
+
+func (s *Server) serveEncrypted(w http.ResponseWriter, name string) {
+	data, err := s.readDecrypted(name)
 	if err != nil {
 		serverError(w, err)
 		return

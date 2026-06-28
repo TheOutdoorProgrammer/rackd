@@ -36,6 +36,7 @@ type Ammo struct {
 	ShellLength        string `json:"shellLength"` // shotshells: 2½" | 2¾" | 3" | 3½"
 	GrainWeight        int64  `json:"grainWeight"`
 	QuantityOnHand     int64  `json:"quantityOnHand"`
+	LowStockThreshold  int64  `json:"lowStockThreshold"` // alert when on-hand <= this (0 = off)
 	LotNumber          string `json:"lotNumber"`
 	AcquiredDate       string `json:"acquiredDate"`
 	AcquiredPriceCents int64  `json:"acquiredPriceCents"`

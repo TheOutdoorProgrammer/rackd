@@ -10,6 +10,7 @@ import (
 type summaryResponse struct {
 	Counts          map[string]int `json:"counts"`
 	TotalValueCents int64          `json:"totalValueCents"`
+	LowStockAmmo    int            `json:"lowStockAmmo"`
 }
 
 func (s *Server) handleSummary(w http.ResponseWriter, _ *http.Request) {
@@ -48,6 +49,13 @@ func (s *Server) handleSummary(w http.ResponseWriter, _ *http.Request) {
 		total += a.ValueCents
 	}
 
+	lowAmmo := 0
+	for _, a := range ammo {
+		if a.LowStockThreshold > 0 && a.QuantityOnHand <= a.LowStockThreshold {
+			lowAmmo++
+		}
+	}
+
 	writeJSON(w, http.StatusOK, summaryResponse{
 		Counts: map[string]int{
 			"firearms":    len(firearms),
@@ -56,6 +64,7 @@ func (s *Server) handleSummary(w http.ResponseWriter, _ *http.Request) {
 			"accessories": len(accessories),
 		},
 		TotalValueCents: total,
+		LowStockAmmo:    lowAmmo,
 	})
 }
 

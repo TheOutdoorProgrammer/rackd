@@ -81,6 +81,23 @@ func (s *Store) DeleteAmmo(id int64) error {
 	return checkAffected(res)
 }
 
+// AdjustAmmo changes an ammo line's rounds-on-hand by delta (clamped at zero)
+// and returns the updated record. Backs the quick use/refill buttons.
+func (s *Store) AdjustAmmo(id, delta int64) (*Ammo, error) {
+	a, err := s.GetAmmo(id)
+	if err != nil {
+		return nil, err
+	}
+	a.QuantityOnHand += delta
+	if a.QuantityOnHand < 0 {
+		a.QuantityOnHand = 0
+	}
+	if err := s.UpdateAmmo(a); err != nil {
+		return nil, err
+	}
+	return a, nil
+}
+
 // LinkAmmo associates an ammo line with a firearm (upsert), with an optional note.
 func (s *Store) LinkAmmo(firearmID, ammoID int64, note string) error {
 	blob, err := s.encrypt(map[string]string{"note": note})
@@ -136,6 +153,35 @@ func (s *Store) ListAmmoForFirearm(firearmID int64) ([]AmmoLink, error) {
 			note = m["note"]
 		}
 		out = append(out, AmmoLink{Ammo: a, Note: note})
+	}
+	return out, rows.Err()
+}
+
+// ListFirearmsForAmmo returns the firearms an ammo line is linked to — the
+// reverse of ListAmmoForFirearm, so one ammo can serve many guns.
+func (s *Store) ListFirearmsForAmmo(ammoID int64) ([]Firearm, error) {
+	rows, err := s.db.Query(
+		`SELECT f.id, f.data FROM firearm_ammo fa JOIN firearms f ON f.id = fa.firearm_id
+		 WHERE fa.ammo_id = ? ORDER BY f.id`,
+		ammoID,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	out := []Firearm{}
+	for rows.Next() {
+		var id int64
+		var blob []byte
+		if err := rows.Scan(&id, &blob); err != nil {
+			return nil, err
+		}
+		var f Firearm
+		if err := s.decrypt(blob, &f); err != nil {
+			return nil, err
+		}
+		f.ID = id
+		out = append(out, f)
 	}
 	return out, rows.Err()
 }

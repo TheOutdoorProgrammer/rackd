@@ -60,6 +60,7 @@ func (s *Server) routes() http.Handler {
 			r.Post("/auth/lock", s.handleLock)
 			r.Get("/summary", s.handleSummary)
 			r.Get("/search", s.handleSearch)
+			r.Get("/report.pdf", s.handleReport)
 
 			r.Route("/firearms", func(r chi.Router) {
 				r.Get("/", s.handleListFirearms)
@@ -81,6 +82,8 @@ func (s *Server) routes() http.Handler {
 					r.Get("/", s.handleGetAmmo)
 					r.Put("/", s.handleUpdateAmmo)
 					r.Delete("/", s.handleDeleteAmmo)
+					r.Post("/adjust", s.handleAdjustAmmo)
+					r.Get("/firearms", s.handleListAmmoFirearms)
 				})
 			})
 
@@ -110,6 +113,7 @@ func (s *Server) routes() http.Handler {
 				r.Get("/{id}", s.handleServePhoto)
 				r.Get("/{id}/thumb", s.handleServeThumb)
 				r.Put("/{id}/cover", s.handleSetCover)
+				r.Post("/{id}/rotate", s.handleRotatePhoto)
 				r.Delete("/{id}", s.handleDeletePhoto)
 			})
 
