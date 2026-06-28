@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react'
+import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { setupVault, unlockVault } from '../api'
 import type { Status } from '../types'
 
@@ -14,9 +14,11 @@ export default function UnlockScreen({
   const [confirm, setConfirm] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
+  const submitting = useRef(false)
+  const done = useRef(false)
 
-  const submit = async (e: FormEvent) => {
-    e.preventDefault()
+  const submit = async () => {
+    if (submitting.current || done.current) return
     setError(null)
     if (pin.length !== 6) {
       setError('Enter a 6-digit PIN')
@@ -24,12 +26,15 @@ export default function UnlockScreen({
     }
     if (isSetup && pin !== confirm) {
       setError('PINs do not match')
+      setConfirm('')
       return
     }
+    submitting.current = true
     setBusy(true)
     try {
       if (isSetup) await setupVault(pin)
       else await unlockVault(pin)
+      done.current = true
       onUnlocked()
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong')
@@ -37,12 +42,28 @@ export default function UnlockScreen({
       setConfirm('')
     } finally {
       setBusy(false)
+      submitting.current = false
     }
   }
 
+  // Auto-submit: unlock the moment the PIN is complete; on setup, once both
+  // fields are filled. No manual submit needed.
+  useEffect(() => {
+    if (busy || submitting.current || done.current) return
+    const ready = isSetup ? pin.length === 6 && confirm.length === 6 : pin.length === 6
+    if (ready) void submit()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pin, confirm, busy, isSetup])
+
   return (
     <div className="flex min-h-dvh flex-col items-center justify-center px-6">
-      <form onSubmit={submit} className="w-full max-w-sm">
+      <form
+        onSubmit={(e: FormEvent) => {
+          e.preventDefault()
+          void submit()
+        }}
+        className="w-full max-w-sm"
+      >
         <h1 className="mb-1 text-center text-3xl font-semibold tracking-wide text-dracula-purple">rackd</h1>
         <p className="mb-8 text-center text-sm text-dracula-comment">
           {isSetup ? 'Create a 6-digit PIN to secure your vault' : 'Enter your PIN to unlock'}
