@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/TheOutdoorProgrammer/rackd/internal/db"
+	"github.com/TheOutdoorProgrammer/boating-accident/internal/db"
 )
 
 func TestBuild(t *testing.T) {

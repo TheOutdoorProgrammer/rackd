@@ -17,14 +17,14 @@ COPY . .
 COPY --from=web /web/dist ./web/dist
 ARG TARGETOS TARGETARCH
 RUN CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH \
-    go build -trimpath -ldflags "-s -w" -o /rackd ./cmd/rackd
+    go build -trimpath -ldflags "-s -w" -o /boating-accident ./cmd/boating-accident
 
 # 3. Minimal static runtime. distroless ships CA certs (for outbound HTTPS to the
 #    spec sources) and runs as a non-root user.
 FROM gcr.io/distroless/static-debian12:nonroot
-COPY --from=build /rackd /usr/local/bin/rackd
-ENV RACKD_DATA_DIR=/data \
-    RACKD_ADDR=:8080
+COPY --from=build /boating-accident /usr/local/bin/boating-accident
+ENV BOAT_DATA_DIR=/data \
+    BOAT_ADDR=:8080
 EXPOSE 8080
 VOLUME ["/data"]
-ENTRYPOINT ["/usr/local/bin/rackd"]
+ENTRYPOINT ["/usr/local/bin/boating-accident"]

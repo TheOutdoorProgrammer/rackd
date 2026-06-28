@@ -1,18 +1,18 @@
-# Contributing to rackd
+# Contributing to boating-accident
 
-Thanks for your interest! rackd is a single Go binary with an embedded React SPA.
+Thanks for your interest! boating-accident is a single Go binary with an embedded React SPA.
 
 ## Layout
 
 ```
-cmd/rackd/         entrypoint (wire-up + graceful shutdown)
+cmd/boating-accident/         entrypoint (wire-up + graceful shutdown)
 internal/
   api/             HTTP handlers, router, middleware
   vault/           the encryption core (Argon2id + AES-256-GCM envelope)
   db/              SQLite access — every content field is encrypted before write
   images/          photo normalization (EXIF strip + thumbnail)
   specs/           Wikipedia/DBpedia spec lookup client
-  config/          RACKD_* env config
+  config/          BOAT_* env config
 web/               React 19 + Vite + Tailwind SPA, embedded via go:embed
 ```
 
@@ -22,7 +22,7 @@ Run the backend and the Vite dev server side by side (Vite proxies `/api` to `:8
 
 ```sh
 # terminal 1 — backend
-RACKD_DEV=true go run ./cmd/rackd
+BOAT_DEV=true go run ./cmd/boating-accident
 # terminal 2 — frontend (hot reload)
 cd web && npm install && npm run dev   # http://localhost:5173
 ```
@@ -31,7 +31,7 @@ Or build the SPA once and run the single binary:
 
 ```sh
 cd web && npm run build && cd ..
-RACKD_DEV=true go run ./cmd/rackd       # http://localhost:8080
+BOAT_DEV=true go run ./cmd/boating-accident       # http://localhost:8080
 ```
 
 ## Before opening a PR

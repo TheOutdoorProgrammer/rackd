@@ -74,7 +74,7 @@ type Page struct {
 	Title string            `json:"title"`
 	URL   string            `json:"url"`
 	Specs []Spec            `json:"specs"`
-	Fill  map[string]string `json:"fill"` // editable rackd fields we can suggest
+	Fill  map[string]string `json:"fill"` // editable boating-accident fields we can suggest
 }
 
 var (
@@ -146,7 +146,7 @@ func (c *Client) getJSON(ctx context.Context, u string, dst any) error {
 	if err != nil {
 		return err
 	}
-	req.Header.Set("User-Agent", "rackd/1.0 (self-hosted firearm inventory)")
+	req.Header.Set("User-Agent", "boating-accident/1.0 (self-hosted firearm inventory)")
 	resp, err := c.http.Do(req)
 	if err != nil {
 		return err

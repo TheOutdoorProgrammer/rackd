@@ -1,16 +1,16 @@
 services:
-  rackd:
-    image: ghcr.io/theoutdoorprogrammer/rackd:latest
-    container_name: rackd
+  boating-accident:
+    image: ghcr.io/theoutdoorprogrammer/boating-accident:latest
+    container_name: boating-accident
     restart: unless-stopped
     ports:
       - "8080:8080"
     volumes:
-      - rackd-data:/data
+      - boating-accident-data:/data
     environment:
-      # RACKD_DEV=true relaxes the Secure cookie flag so auth works over plain
+      # BOAT_DEV=true relaxes the Secure cookie flag so auth works over plain
       # http (local testing). Behind an HTTPS reverse proxy, set this to false.
-      RACKD_DEV: "true"
+      BOAT_DEV: "true"
 
 volumes:
-  rackd-data:
+  boating-accident-data:

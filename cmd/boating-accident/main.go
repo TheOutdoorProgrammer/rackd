@@ -1,4 +1,4 @@
-// Command rackd is a self-hosted, encrypted inventory for firearms, ammo,
+// Command boating-accident is a self-hosted, encrypted inventory for firearms, ammo,
 // knives, and accessories. Data is encrypted at rest and unlocked with a PIN.
 package main
 
@@ -15,11 +15,11 @@ import (
 
 	"github.com/alexedwards/scs/v2"
 
-	"github.com/TheOutdoorProgrammer/rackd/internal/api"
-	"github.com/TheOutdoorProgrammer/rackd/internal/config"
-	"github.com/TheOutdoorProgrammer/rackd/internal/db"
-	"github.com/TheOutdoorProgrammer/rackd/internal/specs"
-	"github.com/TheOutdoorProgrammer/rackd/internal/vault"
+	"github.com/TheOutdoorProgrammer/boating-accident/internal/api"
+	"github.com/TheOutdoorProgrammer/boating-accident/internal/config"
+	"github.com/TheOutdoorProgrammer/boating-accident/internal/db"
+	"github.com/TheOutdoorProgrammer/boating-accident/internal/specs"
+	"github.com/TheOutdoorProgrammer/boating-accident/internal/vault"
 )
 
 func main() {
@@ -39,7 +39,7 @@ func run() error {
 		return err
 	}
 
-	database, err := db.Open(filepath.Join(cfg.DataDir, "rackd.db"))
+	database, err := db.Open(filepath.Join(cfg.DataDir, "boating-accident.db"))
 	if err != nil {
 		return err
 	}
@@ -57,7 +57,7 @@ func run() error {
 	sessions := scs.New() // in-memory store: sessions die on restart, re-locking the vault
 	sessions.Lifetime = 12 * time.Hour
 	sessions.IdleTimeout = time.Hour
-	sessions.Cookie.Name = "rackd_session"
+	sessions.Cookie.Name = "boating-accident_session"
 	sessions.Cookie.HttpOnly = true
 	sessions.Cookie.SameSite = http.SameSiteLaxMode
 	sessions.Cookie.Secure = !cfg.Dev

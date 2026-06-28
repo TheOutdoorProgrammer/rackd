@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/TheOutdoorProgrammer/rackd/internal/vault"
+	"github.com/TheOutdoorProgrammer/boating-accident/internal/vault"
 )
 
 type statusResponse struct {

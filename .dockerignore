@@ -1,7 +1,7 @@
 .git
 .github
 /data
-/rackd
+/boating-accident
 *.db
 *.db-wal
 *.db-shm

@@ -15,7 +15,7 @@ export default function AppShell({ onLock, children }: { onLock: () => void; chi
     <div className="min-h-dvh">
       <header className="sticky top-0 z-10 border-b border-dracula-current bg-dracula-bg/90 backdrop-blur">
         <div className="mx-auto flex max-w-3xl items-center gap-3 px-4 py-3">
-          <Link to="/" className="text-xl font-semibold tracking-wide text-dracula-purple">rackd</Link>
+          <Link to="/" className="text-xl font-semibold tracking-wide text-dracula-purple">Boating Accident</Link>
           <form onSubmit={onSearch} className="flex-1">
             <input
               value={q}

@@ -6,7 +6,7 @@ import (
 	"errors"
 	"time"
 
-	"github.com/TheOutdoorProgrammer/rackd/internal/vault"
+	"github.com/TheOutdoorProgrammer/boating-accident/internal/vault"
 )
 
 // ErrNotFound is returned when a row does not exist.

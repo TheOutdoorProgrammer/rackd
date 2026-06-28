@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/TheOutdoorProgrammer/rackd/internal/vault"
+	"github.com/TheOutdoorProgrammer/boating-accident/internal/vault"
 )
 
 func newTestStore(t *testing.T) *Store {

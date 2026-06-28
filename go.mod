@@ -1,4 +1,4 @@
-module github.com/TheOutdoorProgrammer/rackd
+module github.com/TheOutdoorProgrammer/boating-accident
 
 go 1.26.3
 

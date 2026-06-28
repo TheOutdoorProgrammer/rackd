@@ -10,8 +10,8 @@ import (
 	"path/filepath"
 	"strconv"
 
-	"github.com/TheOutdoorProgrammer/rackd/internal/db"
-	"github.com/TheOutdoorProgrammer/rackd/internal/images"
+	"github.com/TheOutdoorProgrammer/boating-accident/internal/db"
+	"github.com/TheOutdoorProgrammer/boating-accident/internal/images"
 )
 
 const (

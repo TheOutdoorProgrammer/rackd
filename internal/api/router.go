@@ -9,10 +9,10 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 
-	"github.com/TheOutdoorProgrammer/rackd/internal/config"
-	"github.com/TheOutdoorProgrammer/rackd/internal/db"
-	"github.com/TheOutdoorProgrammer/rackd/internal/specs"
-	"github.com/TheOutdoorProgrammer/rackd/internal/vault"
+	"github.com/TheOutdoorProgrammer/boating-accident/internal/config"
+	"github.com/TheOutdoorProgrammer/boating-accident/internal/db"
+	"github.com/TheOutdoorProgrammer/boating-accident/internal/specs"
+	"github.com/TheOutdoorProgrammer/boating-accident/internal/vault"
 )
 
 const sessionAuthKey = "authenticated"

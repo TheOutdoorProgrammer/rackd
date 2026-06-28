@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🔒 rackd
+# 🔒 Boating Accident
 
 **A self-hosted, encrypted inventory for your firearms, ammo, knives, and accessories.**
 
@@ -8,13 +8,13 @@ Everything — serial numbers, photos, the whole list — is encrypted at rest a
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Go](https://img.shields.io/badge/Go-1.26-00ADD8?logo=go&logoColor=white)](go.mod)
-[![Docker image](https://img.shields.io/badge/ghcr.io-rackd-2496ED?logo=docker&logoColor=white)](https://github.com/TheOutdoorProgrammer/rackd/pkgs/container/rackd)
-[![Build](https://github.com/TheOutdoorProgrammer/rackd/actions/workflows/docker.yml/badge.svg)](https://github.com/TheOutdoorProgrammer/rackd/actions/workflows/docker.yml)
+[![Docker image](https://img.shields.io/badge/ghcr.io-boating-accident-2496ED?logo=docker&logoColor=white)](https://github.com/TheOutdoorProgrammer/boating-accident/pkgs/container/boating-accident)
+[![Build](https://github.com/TheOutdoorProgrammer/boating-accident/actions/workflows/docker.yml/badge.svg)](https://github.com/TheOutdoorProgrammer/boating-accident/actions/workflows/docker.yml)
 
 </div>
 
 > [!NOTE]
-> rackd is a **personal inventory tool** — not a legal record, an ATF Form 4473, or compliance software. Don't rely on it for anything legal.
+> Boating Accident is a **personal inventory tool** — not a legal record, an ATF Form 4473, or compliance software. Don't rely on it for anything legal.
 
 ---
 
@@ -30,7 +30,7 @@ Everything — serial numbers, photos, the whole list — is encrypted at rest a
 
 ## Why
 
-Existing trackers either do one thing (just ammo, or just guns) or bury a simple inventory under range-drill analytics and export pipelines. rackd is the lean, unified core — catalog what you own, attach photos, note where you got it — with **real at-rest encryption** so the data is useless to anyone who doesn't have your PIN.
+Existing trackers either do one thing (just ammo, or just guns) or bury a simple inventory under range-drill analytics and export pipelines. Boating Accident is the lean, unified core — catalog what you own, attach photos, note where you got it — with **real at-rest encryption** so the data is useless to anyone who doesn't have your PIN.
 
 ## Features
 
@@ -64,12 +64,12 @@ Existing trackers either do one thing (just ammo, or just guns) or bury a simple
 ### Docker
 
 ```sh
-docker run -d --name rackd -p 8080:8080 -v rackd-data:/data \
-  -e RACKD_DEV=true \
-  ghcr.io/theoutdoorprogrammer/rackd:latest
+docker run -d --name boating-accident -p 8080:8080 -v boating-accident-data:/data \
+  -e BOAT_DEV=true \
+  ghcr.io/theoutdoorprogrammer/boating-accident:latest
 ```
 
-Open <http://localhost:8080> and set a 6-digit PIN. (`RACKD_DEV=true` lets the session cookie work over plain `http` for local testing — behind HTTPS, leave it `false`.)
+Open <http://localhost:8080> and set a 6-digit PIN. (`BOAT_DEV=true` lets the session cookie work over plain `http` for local testing — behind HTTPS, leave it `false`.)
 
 ### docker-compose
 
@@ -83,7 +83,7 @@ See [`docker-compose.yml`](docker-compose.yml).
 
 ```sh
 cd web && npm install && npm run build && cd ..
-go run ./cmd/rackd
+go run ./cmd/boating-accident
 ```
 
 ## Configuration
@@ -92,21 +92,21 @@ All settings are optional environment variables:
 
 | Variable | Default | Description |
 | --- | --- | --- |
-| `RACKD_ADDR` | `:8080` | Listen address |
-| `RACKD_DATA_DIR` | `./data` | SQLite DB + encrypted uploads |
-| `RACKD_DEV` | `false` | Relax the `Secure` cookie flag for local `http` (never in prod) |
-| `RACKD_ARGON2_MEMORY_MB` | `256` | Argon2id memory cost (new vaults only) |
-| `RACKD_ARGON2_TIME` | `4` | Argon2id iterations |
-| `RACKD_ARGON2_THREADS` | `4` | Argon2id parallelism |
+| `BOAT_ADDR` | `:8080` | Listen address |
+| `BOAT_DATA_DIR` | `./data` | SQLite DB + encrypted uploads |
+| `BOAT_DEV` | `false` | Relax the `Secure` cookie flag for local `http` (never in prod) |
+| `BOAT_ARGON2_MEMORY_MB` | `256` | Argon2id memory cost (new vaults only) |
+| `BOAT_ARGON2_TIME` | `4` | Argon2id iterations |
+| `BOAT_ARGON2_THREADS` | `4` | Argon2id parallelism |
 
 ## Integrations
 
-- **AmmoSeek** — deep links only. AmmoSeek's ToS prohibits automated access, so rackd never scrapes it; it just opens their per-caliber page in your browser.
+- **AmmoSeek** — deep links only. AmmoSeek's ToS prohibits automated access, so Boating Accident never scrapes it; it just opens their per-caliber page in your browser.
 - **Spec lookup** — Wikipedia full-text search → DBpedia infobox, key-less and cached indefinitely. Community-sourced, so you **review before it fills** anything.
 
 ## How it works
 
-Go ([chi](https://github.com/go-chi/chi), [modernc sqlite](https://modernc.org/sqlite), [goose](https://github.com/pressly/goose)) serves a React 19 + Vite + Tailwind SPA embedded via `//go:embed` — so the whole app ships as one static, CGO-free binary. All state lives in `RACKD_DATA_DIR` (the SQLite database + encrypted upload blobs).
+Go ([chi](https://github.com/go-chi/chi), [modernc sqlite](https://modernc.org/sqlite), [goose](https://github.com/pressly/goose)) serves a React 19 + Vite + Tailwind SPA embedded via `//go:embed` — so the whole app ships as one static, CGO-free binary. All state lives in `BOAT_DATA_DIR` (the SQLite database + encrypted upload blobs).
 
 ## Self-hosting notes
 

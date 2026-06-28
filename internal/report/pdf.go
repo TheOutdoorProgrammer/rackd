@@ -9,7 +9,7 @@ import (
 
 	"github.com/go-pdf/fpdf"
 
-	"github.com/TheOutdoorProgrammer/rackd/internal/db"
+	"github.com/TheOutdoorProgrammer/boating-accident/internal/db"
 )
 
 // Data is everything the report needs, already decrypted by the caller.
@@ -25,7 +25,7 @@ type Data struct {
 func Build(d Data) ([]byte, error) {
 	pdf := fpdf.New("P", "mm", "Letter", "")
 	tr := pdf.UnicodeTranslatorFromDescriptor("") // UTF-8 -> cp1252 for core fonts
-	pdf.SetTitle("rackd inventory report", false)
+	pdf.SetTitle("Boating Accident inventory report", false)
 	pdf.SetMargins(12, 14, 12)
 	pdf.SetAutoPageBreak(true, 14)
 	pdf.AddPage()
@@ -68,7 +68,7 @@ func Build(d Data) ([]byte, error) {
 
 	pdf.SetFont("Helvetica", "B", 18)
 	pdf.SetTextColor(40, 42, 54)
-	pdf.CellFormat(0, 10, tr("rackd — Inventory Report"), "", 1, "L", false, 0, "")
+	pdf.CellFormat(0, 10, tr("Boating Accident — Inventory Report"), "", 1, "L", false, 0, "")
 	pdf.SetFont("Helvetica", "", 10)
 	pdf.SetTextColor(110, 110, 120)
 	pdf.CellFormat(0, 6, tr("Generated "+d.Generated.Format("Jan 2, 2006 3:04 PM")), "", 1, "L", false, 0, "")

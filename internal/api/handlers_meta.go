@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/TheOutdoorProgrammer/rackd/internal/db"
+	"github.com/TheOutdoorProgrammer/boating-accident/internal/db"
 )
 
 type summaryResponse struct {

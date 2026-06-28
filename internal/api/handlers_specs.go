@@ -35,7 +35,7 @@ func (s *Server) handleSpecsPage(w http.ResponseWriter, r *http.Request) {
 func (s *Server) cachedSpec(w http.ResponseWriter, ctx context.Context, cacheKey string, produce func(context.Context) (any, error)) {
 	if data, ok, err := s.store.SpecCacheGet(cacheKey); err == nil && ok {
 		w.Header().Set("Content-Type", "application/json")
-		w.Header().Set("X-Rackd-Cache", "hit")
+		w.Header().Set("X-Boat-Cache", "hit")
 		_, _ = w.Write(data)
 		return
 	}
@@ -52,7 +52,7 @@ func (s *Server) cachedSpec(w http.ResponseWriter, ctx context.Context, cacheKey
 	}
 	_ = s.store.SpecCachePut(cacheKey, data)
 	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("X-Rackd-Cache", "miss")
+	w.Header().Set("X-Boat-Cache", "miss")
 	_, _ = w.Write(data)
 }
 

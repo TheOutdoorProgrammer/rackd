@@ -64,7 +64,7 @@ export default function UnlockScreen({
         }}
         className="w-full max-w-sm"
       >
-        <h1 className="mb-1 text-center text-3xl font-semibold tracking-wide text-dracula-purple">rackd</h1>
+        <h1 className="mb-1 text-center text-3xl font-semibold tracking-wide text-dracula-purple">Boating Accident</h1>
         <p className="mb-8 text-center text-sm text-dracula-comment">
           {isSetup ? 'Create a 6-digit PIN to secure your vault' : 'Enter your PIN to unlock'}
         </p>

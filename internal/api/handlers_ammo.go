@@ -4,7 +4,7 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/TheOutdoorProgrammer/rackd/internal/db"
+	"github.com/TheOutdoorProgrammer/boating-accident/internal/db"
 )
 
 func (s *Server) handleListAmmo(w http.ResponseWriter, _ *http.Request) {

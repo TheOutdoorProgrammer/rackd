@@ -8,7 +8,7 @@
 .env
 
 # Built binary
-/rackd
+/boating-accident
 
 # Frontend
 web/node_modules/

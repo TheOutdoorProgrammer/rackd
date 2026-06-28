@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/TheOutdoorProgrammer/rackd/web"
+	"github.com/TheOutdoorProgrammer/boating-accident/web"
 )
 
 // spaHandler serves the embedded React build, falling back to index.html so

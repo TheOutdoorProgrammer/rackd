@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/TheOutdoorProgrammer/rackd/internal/db"
+	"github.com/TheOutdoorProgrammer/boating-accident/internal/db"
 )
 
 func (s *Server) handleListAccessories(w http.ResponseWriter, r *http.Request) {
