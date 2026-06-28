@@ -6,10 +6,26 @@ import { centsToDollars, dollarsToCents } from '../format'
 import SpecLookup from '../components/SpecLookup'
 import type { Firearm, Item } from '../types'
 
+// A <select> renders its first <option> but never fires onChange until tapped,
+// so an untouched field would save empty. Seed the first option's value so what's
+// shown is what's saved (nfaType's first option is "", so it correctly stays empty).
+function selectDefault(f: Field): string {
+  return f.options?.[0]?.value ?? ''
+}
+
+function defaultValues(cfg: ResourceConfig): Record<string, any> {
+  const v: Record<string, any> = {}
+  for (const f of cfg.fields) {
+    if (f.type === 'select') v[f.name] = selectDefault(f)
+  }
+  return v
+}
+
 function seedValues(cfg: ResourceConfig, item: Record<string, any>): Record<string, any> {
   const v = { ...item }
   for (const f of cfg.fields) {
     if (f.type === 'money') v[f.name] = centsToDollars(item[f.name] ?? 0)
+    else if (f.type === 'select' && (v[f.name] === undefined || v[f.name] === '')) v[f.name] = selectDefault(f)
   }
   return v
 }
@@ -39,6 +55,7 @@ export default function ResourceForm() {
     if (!resource || !RESOURCES[resource]) return
     const c = RESOURCES[resource]
     if (editing && id) getItem<Item>(resource, Number(id)).then((it) => setValues(seedValues(c, it))).catch(() => {})
+    else setValues(defaultValues(c))
     if (c.fields.some((f) => f.type === 'firearmRef')) {
       listItems<Firearm>('firearms').then(setFirearms).catch(() => {})
     }
