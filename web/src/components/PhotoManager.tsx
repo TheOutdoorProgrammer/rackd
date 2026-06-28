@@ -7,7 +7,6 @@ export default function PhotoManager({ owner, id }: { owner: string; id: number 
   const [busy, setBusy] = useState(false)
   const [err, setErr] = useState<string | null>(null)
   const [viewer, setViewer] = useState<number | null>(null)
-  const [rev, setRev] = useState(0) // cache-buster bumped after a rotate
   const fileRef = useRef<HTMLInputElement>(null)
 
   const refresh = () => listPhotos(owner, id).then(setPhotos).catch(() => {})
@@ -48,12 +47,14 @@ export default function PhotoManager({ owner, id }: { owner: string; id: number 
     await refresh()
   }
 
+  // Rotate rewrites the file server-side and bumps updatedAt; refreshing pulls the
+  // new stamp, which changes the image URL so the browser fetches the rotated bytes.
   const rotate = async (pid: number) => {
     await rotatePhoto(pid)
-    setRev((r) => r + 1) // same URL, new bytes — bust the image cache
+    await refresh()
   }
 
-  const bust = (url: string) => `${url}?v=${rev}`
+  const viewed = viewer === null ? null : photos.find((p) => p.id === viewer)
 
   return (
     <div>
@@ -73,7 +74,7 @@ export default function PhotoManager({ owner, id }: { owner: string; id: number 
             <div key={p.id} className="relative">
               <button type="button" onClick={() => setViewer(p.id)} className="block w-full" title="Tap to enlarge">
                 <img
-                  src={bust(thumbURL(p.id))}
+                  src={thumbURL(p.id, p.updatedAt)}
                   alt={p.filename}
                   className={`aspect-square w-full rounded-lg object-cover ${p.cover ? 'ring-2 ring-dracula-purple' : ''}`}
                 />
@@ -105,12 +106,12 @@ export default function PhotoManager({ owner, id }: { owner: string; id: number 
           ))}
         </div>
       )}
-      {viewer !== null && (
+      {viewed && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4"
           onClick={() => setViewer(null)}
         >
-          <img src={bust(photoURL(viewer))} alt="" className="max-h-full max-w-full rounded-lg object-contain" />
+          <img src={photoURL(viewed.id, viewed.updatedAt)} alt="" className="max-h-full max-w-full rounded-lg object-contain" />
         </div>
       )}
     </div>

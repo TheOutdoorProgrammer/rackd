@@ -7,6 +7,7 @@ import (
 
 func (s *Store) CreateAttachment(a *Attachment) error {
 	a.CreatedAt = nowStamp()
+	a.UpdatedAt = a.CreatedAt
 	blob, err := s.encrypt(a) // StoredPath/ThumbPath are json:"-" → not sealed (they're columns)
 	if err != nil {
 		return err
@@ -93,6 +94,22 @@ func (s *Store) SetCover(id int64) error {
 		}
 	}
 	return nil
+}
+
+// TouchAttachment bumps the attachment's UpdatedAt so image URLs can be
+// cache-busted after a rotate rewrites the file bytes.
+func (s *Store) TouchAttachment(id int64) error {
+	a, err := s.GetAttachment(id)
+	if err != nil {
+		return err
+	}
+	a.UpdatedAt = nowStamp()
+	blob, err := s.encrypt(a)
+	if err != nil {
+		return err
+	}
+	_, err = s.db.Exec(`UPDATE attachments SET data = ? WHERE id = ?`, blob, id)
+	return err
 }
 
 // scanner is satisfied by both *sql.Row and *sql.Rows.

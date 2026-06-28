@@ -86,6 +86,7 @@ export interface Attachment {
   contentType: string
   sizeBytes: number
   createdAt: string
+  updatedAt: string
   cover: boolean
 }
 

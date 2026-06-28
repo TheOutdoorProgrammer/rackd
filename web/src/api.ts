@@ -45,8 +45,9 @@ export const listPhotos = (owner: string, id: number) =>
 export const deletePhoto = (id: number) => req<void>(`/api/photos/${id}`, { method: 'DELETE' })
 export const setCover = (id: number) => req<void>(`/api/photos/${id}/cover`, { method: 'PUT' })
 export const rotatePhoto = (id: number) => req<void>(`/api/photos/${id}/rotate`, { method: 'POST' })
-export const photoURL = (id: number) => `/api/photos/${id}`
-export const thumbURL = (id: number) => `/api/photos/${id}/thumb`
+// Optional version (an attachment's updatedAt) cache-busts the URL after a rotate.
+export const photoURL = (id: number, v?: string) => `/api/photos/${id}${v ? `?v=${encodeURIComponent(v)}` : ''}`
+export const thumbURL = (id: number, v?: string) => `/api/photos/${id}/thumb${v ? `?v=${encodeURIComponent(v)}` : ''}`
 export async function uploadPhoto(owner: string, id: number, file: Blob, filename: string): Promise<Attachment> {
   const fd = new FormData()
   fd.append('file', file, filename)

@@ -216,6 +216,10 @@ func (s *Server) handleRotatePhoto(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
+	if err := s.store.TouchAttachment(a.ID); err != nil {
+		serverError(w, err)
+		return
+	}
 	writeJSON(w, http.StatusOK, map[string]bool{"ok": true})
 }
 
