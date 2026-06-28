@@ -91,6 +91,11 @@ func Build(d Data) ([]byte, error) {
 	pdf.CellFormat(0, 7, fit(fmt.Sprintf("%d firearms  -  %d ammo lines  -  %d knives  -  %d accessories  -  est. value %s",
 		len(d.Firearms), len(d.Ammo), len(d.Knives), len(d.Accessories), money(total)), 191), "", 1, "L", false, 0, "")
 
+	byID := make(map[int64]db.Firearm, len(d.Firearms))
+	for _, f := range d.Firearms {
+		byID[f.ID] = f
+	}
+
 	if len(d.Firearms) > 0 {
 		section("Firearms")
 		w := []float64{40, 45, 25, 35, 20, 26}
@@ -156,12 +161,16 @@ func Build(d Data) ([]byte, error) {
 
 	if len(d.Accessories) > 0 {
 		section("Accessories")
-		w := []float64{50, 30, 40, 24, 26}
+		w := []float64{46, 28, 36, 35, 26}
 		header([]string{"Name", "Category", "Maker", "On gun", "Value"}, w)
 		for _, a := range d.Accessories {
 			gun := ""
 			if a.FirearmID != nil {
-				gun = fmt.Sprintf("#%d", *a.FirearmID)
+				if f, ok := byID[*a.FirearmID]; ok {
+					gun = firearmName(f)
+				} else {
+					gun = fmt.Sprintf("#%d", *a.FirearmID)
+				}
 			}
 			row([]string{
 				a.Name,
@@ -178,6 +187,16 @@ func Build(d Data) ([]byte, error) {
 		return nil, err
 	}
 	return buf.Bytes(), nil
+}
+
+func firearmName(f db.Firearm) string {
+	if f.Nickname != "" {
+		return f.Nickname
+	}
+	if n := joinNonEmpty(" ", f.Manufacturer, f.Model); n != "" {
+		return n
+	}
+	return fmt.Sprintf("#%d", f.ID)
 }
 
 func money(cents int64) string {
