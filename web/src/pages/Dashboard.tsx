@@ -27,6 +27,9 @@ export default function Dashboard() {
             <div className="text-3xl">{RESOURCES[k].emoji}</div>
             <div className="mt-2 text-lg font-medium text-dracula-fg">{RESOURCES[k].label}</div>
             <div className="text-sm text-dracula-comment">{sum ? (sum.counts[k] ?? 0) : '—'} items</div>
+            {k === 'ammo' && sum && sum.lowStockAmmo > 0 && (
+              <div className="mt-1 text-xs font-medium text-dracula-red">{sum.lowStockAmmo} low on stock</div>
+            )}
           </Link>
         ))}
       </div>

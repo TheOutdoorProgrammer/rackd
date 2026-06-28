@@ -41,8 +41,13 @@ export default function ResourceList() {
                 className="flex items-center gap-3 rounded-xl border border-dracula-current p-3 transition hover:border-dracula-purple"
               >
                 <CoverThumb owner={cfg.key} id={it.id} emoji={cfg.emoji} />
-                <div className="min-w-0">
-                  <div className="truncate font-medium text-dracula-fg">{cfg.title(it)}</div>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2">
+                    <span className="truncate font-medium text-dracula-fg">{cfg.title(it)}</span>
+                    {cfg.key === 'ammo' && it.lowStockThreshold > 0 && it.quantityOnHand <= it.lowStockThreshold && (
+                      <span className="shrink-0 rounded-full bg-dracula-red/20 px-2 py-0.5 text-xs font-medium text-dracula-red">Low</span>
+                    )}
+                  </div>
                   <div className="truncate text-sm text-dracula-comment">{cfg.subtitle(it) || '—'}</div>
                 </div>
               </Link>

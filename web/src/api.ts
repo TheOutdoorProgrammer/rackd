@@ -1,8 +1,16 @@
-import type { Status, Attachment, AmmoLink, Summary, SearchResults, SpecSearchResult, SpecPage } from './types'
+import type { Status, Attachment, AmmoLink, Accessory, Ammo, Firearm, Summary, SearchResults, SpecSearchResult, SpecPage } from './types'
+
+// When an authenticated request 401s (session expired or the vault re-locked on
+// a server restart), the app drops straight back to the PIN screen.
+let onUnauthorized: (() => void) | null = null
+export const setUnauthorizedHandler = (fn: () => void) => {
+  onUnauthorized = fn
+}
 
 async function req<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(path, init)
   if (!res.ok) {
+    if (res.status === 401) onUnauthorized?.()
     const body = (await res.json().catch(() => ({}))) as { error?: string }
     throw new Error(body.error ?? res.statusText)
   }
@@ -36,6 +44,7 @@ export const listPhotos = (owner: string, id: number) =>
   req<Attachment[]>(`/api/photos?owner=${owner}&id=${id}`)
 export const deletePhoto = (id: number) => req<void>(`/api/photos/${id}`, { method: 'DELETE' })
 export const setCover = (id: number) => req<void>(`/api/photos/${id}/cover`, { method: 'PUT' })
+export const rotatePhoto = (id: number) => req<void>(`/api/photos/${id}/rotate`, { method: 'POST' })
 export const photoURL = (id: number) => `/api/photos/${id}`
 export const thumbURL = (id: number) => `/api/photos/${id}/thumb`
 export async function uploadPhoto(owner: string, id: number, file: Blob, filename: string): Promise<Attachment> {
@@ -50,6 +59,16 @@ export const linkAmmo = (firearmId: number, ammoId: number, note: string) =>
   req<void>(`/api/firearms/${firearmId}/ammo/${ammoId}`, json('PUT', { note }))
 export const unlinkAmmo = (firearmId: number, ammoId: number) =>
   req<void>(`/api/firearms/${firearmId}/ammo/${ammoId}`, { method: 'DELETE' })
+
+// --- ammo stock + reverse (which guns use an ammo line) ---
+export const adjustAmmo = (id: number, delta: number) =>
+  req<Ammo>(`/api/ammo/${id}/adjust`, json('POST', { delta }))
+export const listFirearmsForAmmo = (ammoId: number) =>
+  req<Firearm[]>(`/api/ammo/${ammoId}/firearms`)
+
+// --- accessories (reverse lookup: which accessories hang off a firearm) ---
+export const listAccessoriesForFirearm = (firearmId: number) =>
+  req<Accessory[]>(`/api/accessories?firearmId=${firearmId}`)
 
 // --- meta ---
 export const getSummary = () => req<Summary>('/api/summary')

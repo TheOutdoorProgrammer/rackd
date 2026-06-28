@@ -32,6 +32,7 @@ export interface Ammo {
   bulletType: string
   grainWeight: number
   quantityOnHand: number
+  lowStockThreshold: number
   lotNumber: string
   acquiredDate: string
   acquiredPriceCents: number
@@ -96,6 +97,7 @@ export interface AmmoLink {
 export interface Summary {
   counts: Record<string, number>
   totalValueCents: number
+  lowStockAmmo: number
 }
 
 export interface SearchResults {

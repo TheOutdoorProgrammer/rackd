@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
-import { getStatus, lockVault } from './api'
+import { getStatus, lockVault, setUnauthorizedHandler } from './api'
 import type { Status } from './types'
 import UnlockScreen from './components/UnlockScreen'
 import AppShell from './components/AppShell'
@@ -17,6 +17,9 @@ export default function App() {
   const refresh = () => getStatus().then(setStatus).catch(() => setStatus(null))
 
   useEffect(() => {
+    // A 401 mid-session means the vault locked (session expiry or a server
+    // restart) — flip back to the PIN screen instead of leaving a broken page.
+    setUnauthorizedHandler(() => setStatus((s) => (s ? { ...s, unlocked: false } : s)))
     void refresh()
   }, [])
 

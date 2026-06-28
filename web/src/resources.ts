@@ -92,6 +92,7 @@ export const RESOURCES: Record<string, ResourceConfig> = {
       { name: 'shellLength', label: 'Shell length', type: 'combo', options: shellLengthOptions },
       { name: 'grainWeight', label: 'Grain weight', type: 'number' },
       { name: 'quantityOnHand', label: 'Rounds on hand', type: 'number' },
+      { name: 'lowStockThreshold', label: 'Low-stock alert (rds)', type: 'number' },
       { name: 'lotNumber', label: 'Lot number' },
       { name: 'acquiredDate', label: 'Acquired date', type: 'date' },
       { name: 'acquiredPriceCents', label: 'Price', type: 'money' },

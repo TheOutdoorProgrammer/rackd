@@ -5,15 +5,19 @@ import { RESOURCES, type Field } from '../resources'
 import { money, titleCase } from '../format'
 import PhotoManager from '../components/PhotoManager'
 import AmmoLinks from '../components/AmmoLinks'
+import FirearmAccessories from '../components/FirearmAccessories'
+import AmmoStock from '../components/AmmoStock'
+import AmmoFirearms from '../components/AmmoFirearms'
+import FirearmRefCard from '../components/FirearmRefCard'
 import AmmoSeekButton from '../components/AmmoSeekButton'
-import type { Item } from '../types'
+import type { Ammo, Item } from '../types'
 
 function formatValue(f: Field, v: any): string {
   if (v === null || v === undefined || v === '') return ''
   if (Array.isArray(v)) return v.length ? v.join(', ') : ''
   if (f.type === 'money') return v ? money(v) : ''
+  if (f.type === 'number') return v ? String(v) : ''
   if (f.type === 'bool') return v ? 'Yes' : ''
-  if (f.type === 'firearmRef') return v ? `#${v}` : ''
   if (f.type === 'select') return titleCase(String(v))
   return String(v)
 }
@@ -41,12 +45,17 @@ export default function ResourceDetail() {
     nav(`/${resource}`)
   }
 
+  // firearmRef → shown as a related-item card; ammo's rounds → shown by AmmoStock.
+  const fields = cfg.fields.filter(
+    (f) => f.type !== 'firearmRef' && !(cfg.key === 'ammo' && f.name === 'quantityOnHand'),
+  )
+
   return (
     <div className="space-y-5">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <h2 className="text-2xl font-semibold text-dracula-fg">{cfg.title(item)}</h2>
-          <p className="text-dracula-comment">{cfg.subtitle(item) || ' '}</p>
+          <p className="text-dracula-comment">{cfg.subtitle(item) || ' '}</p>
         </div>
         <div className="flex shrink-0 gap-2">
           <Link to={`/${resource}/${id}/edit`} className="rounded-lg border border-dracula-current px-3 py-1.5 text-sm text-dracula-fg">Edit</Link>
@@ -57,7 +66,7 @@ export default function ResourceDetail() {
       <PhotoManager owner={cfg.key} id={Number(id)} />
 
       <dl className="divide-y divide-dracula-current rounded-2xl border border-dracula-current">
-        {cfg.fields.map((f) => {
+        {fields.map((f) => {
           const val = formatValue(f, item[f.name])
           if (!val) return null
           return (
@@ -69,13 +78,22 @@ export default function ResourceDetail() {
         })}
       </dl>
 
-      {cfg.key === 'firearms' && (
-        <div className="space-y-4">
-          {item.caliber && <AmmoSeekButton caliber={item.caliber} label={`Find ${item.caliber} ammo on AmmoSeek`} />}
-          <AmmoLinks firearmId={Number(id)} />
-        </div>
-      )}
+      {cfg.key === 'ammo' && <AmmoStock ammo={item as Ammo} onChange={(a) => setItem(a)} />}
 
+      {/* Relationships — every related item rendered the same way (RelatedRow). */}
+      {cfg.key === 'firearms' && (
+        <>
+          <AmmoLinks firearmId={Number(id)} />
+          <FirearmAccessories firearmId={Number(id)} />
+        </>
+      )}
+      {cfg.key === 'ammo' && <AmmoFirearms ammoId={Number(id)} />}
+      {cfg.key === 'accessories' && item.firearmId != null && <FirearmRefCard firearmId={Number(item.firearmId)} />}
+
+      {/* External links always sit at the very bottom. */}
+      {cfg.key === 'firearms' && item.caliber && (
+        <AmmoSeekButton caliber={item.caliber} label={`Find ${item.caliber} ammo on AmmoSeek`} />
+      )}
       {cfg.key === 'ammo' && (
         <div className="rounded-2xl border border-dracula-current p-4">
           {item.quantityOnHand > 0 && item.acquiredPriceCents > 0 && (
