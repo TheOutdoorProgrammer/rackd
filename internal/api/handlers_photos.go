@@ -173,6 +173,22 @@ func (s *Server) handleDeletePhoto(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNoContent)
 }
 
+func (s *Server) handleSetCover(w http.ResponseWriter, r *http.Request) {
+	id, err := parseID(r, "id")
+	if err != nil {
+		writeError(w, http.StatusBadRequest, "invalid id")
+		return
+	}
+	switch err := s.store.SetCover(id); {
+	case errors.Is(err, db.ErrNotFound):
+		writeError(w, http.StatusNotFound, "not found")
+	case err != nil:
+		serverError(w, err)
+	default:
+		writeJSON(w, http.StatusOK, map[string]bool{"ok": true})
+	}
+}
+
 // --- helpers ---
 
 func (s *Server) loadAttachment(w http.ResponseWriter, r *http.Request) *db.Attachment {

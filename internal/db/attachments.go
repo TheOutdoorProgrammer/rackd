@@ -67,6 +67,34 @@ func (s *Store) DeleteAttachment(id int64) error {
 	return checkAffected(res)
 }
 
+// SetCover marks one attachment as its owner's cover photo and clears the flag
+// on its siblings (so exactly one is the cover).
+func (s *Store) SetCover(id int64) error {
+	target, err := s.GetAttachment(id)
+	if err != nil {
+		return err
+	}
+	siblings, err := s.ListAttachments(target.OwnerType, target.OwnerID)
+	if err != nil {
+		return err
+	}
+	for i := range siblings {
+		want := siblings[i].ID == id
+		if siblings[i].Cover == want {
+			continue
+		}
+		siblings[i].Cover = want
+		blob, err := s.encrypt(&siblings[i]) // StoredPath/ThumbPath are json:"-"; only the data blob changes
+		if err != nil {
+			return err
+		}
+		if _, err := s.db.Exec(`UPDATE attachments SET data = ? WHERE id = ?`, blob, siblings[i].ID); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 // scanner is satisfied by both *sql.Row and *sql.Rows.
 type scanner interface {
 	Scan(dest ...any) error

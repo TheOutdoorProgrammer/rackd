@@ -7,7 +7,11 @@ export default function CoverThumb({ owner, id, emoji }: { owner: string; id: nu
   useEffect(() => {
     let active = true
     listPhotos(owner, id)
-      .then((p) => { if (active && p.length) setPhotoId(p[0].id) })
+      .then((p) => {
+        if (!active) return
+        const cover = p.find((x) => x.cover) ?? p[0]
+        if (cover) setPhotoId(cover.id)
+      })
       .catch(() => {})
     return () => { active = false }
   }, [owner, id])

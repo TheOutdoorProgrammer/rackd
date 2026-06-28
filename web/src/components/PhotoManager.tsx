@@ -1,5 +1,5 @@
 import { type ChangeEvent, useEffect, useRef, useState } from 'react'
-import { deletePhoto, listPhotos, thumbURL, uploadPhoto } from '../api'
+import { deletePhoto, listPhotos, setCover, thumbURL, uploadPhoto } from '../api'
 import type { Attachment } from '../types'
 
 export default function PhotoManager({ owner, id }: { owner: string; id: number }) {
@@ -40,6 +40,11 @@ export default function PhotoManager({ owner, id }: { owner: string; id: number 
     await refresh()
   }
 
+  const makeCover = async (pid: number) => {
+    await setCover(pid)
+    await refresh()
+  }
+
   return (
     <div>
       <div className="mb-2 flex items-center justify-between">
@@ -55,11 +60,22 @@ export default function PhotoManager({ owner, id }: { owner: string; id: number 
       ) : (
         <div className="grid grid-cols-3 gap-2">
           {photos.map((p) => (
-            <div key={p.id} className="group relative">
-              <img src={thumbURL(p.id)} alt={p.filename} className="aspect-square w-full rounded-lg object-cover" />
+            <div key={p.id} className="relative">
+              <img
+                src={thumbURL(p.id)}
+                alt={p.filename}
+                className={`aspect-square w-full rounded-lg object-cover ${p.cover ? 'ring-2 ring-dracula-purple' : ''}`}
+              />
+              <button
+                onClick={() => makeCover(p.id)}
+                title={p.cover ? 'Cover photo' : 'Set as cover'}
+                className={`absolute left-1 top-1 rounded-md bg-dracula-bg/80 px-1.5 py-0.5 text-xs ${p.cover ? 'text-dracula-yellow' : 'text-dracula-fg'}`}
+              >
+                {p.cover ? '★' : '☆'}
+              </button>
               <button
                 onClick={() => remove(p.id)}
-                className="absolute right-1 top-1 rounded-md bg-dracula-bg/80 px-1.5 text-xs text-dracula-red opacity-0 transition group-hover:opacity-100"
+                className="absolute right-1 top-1 rounded-md bg-dracula-bg/80 px-1.5 py-0.5 text-xs text-dracula-red"
               >
                 ✕
               </button>

@@ -109,6 +109,7 @@ func (s *Server) routes() http.Handler {
 				r.Post("/", s.handleUploadPhoto) // ?owner=&id= (multipart)
 				r.Get("/{id}", s.handleServePhoto)
 				r.Get("/{id}/thumb", s.handleServeThumb)
+				r.Put("/{id}/cover", s.handleSetCover)
 				r.Delete("/{id}", s.handleDeletePhoto)
 			})
 

@@ -76,7 +76,8 @@ export const RESOURCES: Record<string, ResourceConfig> = {
       { name: 'notes', label: 'Notes', type: 'textarea' },
     ],
     title: (f) => f.nickname || [f.manufacturer, f.model].filter(Boolean).join(' ') || 'Firearm',
-    subtitle: (f) => [f.caliber, f.kind, f.shellLengths?.length ? f.shellLengths.join(', ') : ''].filter(Boolean).join(' · '),
+    subtitle: (f) =>
+      [f.shellLengths?.length ? `${f.caliber} (${f.shellLengths.join(', ')})` : f.caliber, f.kind].filter(Boolean).join(' · '),
   },
   ammo: {
     key: 'ammo',

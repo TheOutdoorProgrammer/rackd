@@ -85,6 +85,7 @@ export interface Attachment {
   contentType: string
   sizeBytes: number
   createdAt: string
+  cover: boolean
 }
 
 export interface AmmoLink {

@@ -102,6 +102,7 @@ type Attachment struct {
 	ContentType string `json:"contentType"`
 	SizeBytes   int64  `json:"sizeBytes"`
 	CreatedAt   string `json:"createdAt"`
+	Cover       bool   `json:"cover"` // shown on list cards
 	StoredPath  string `json:"-"`
 	ThumbPath   string `json:"-"`
 }
