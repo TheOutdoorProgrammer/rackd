@@ -45,6 +45,7 @@ func (s *Server) handleReport(w http.ResponseWriter, _ *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/pdf")
-	w.Header().Set("Content-Disposition", `attachment; filename="rackd-report-`+now.Format("2006-01-02")+`.pdf"`)
+	w.Header().Set("Cache-Control", "no-store") // always regenerate; never serve a stale download
+	w.Header().Set("Content-Disposition", `attachment; filename="rackd-report-`+now.Format("2006-01-02-1504")+`.pdf"`)
 	_, _ = w.Write(pdf)
 }
