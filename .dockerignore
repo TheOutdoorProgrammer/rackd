@@ -1,0 +1,11 @@
+.git
+.github
+/data
+/rackd
+*.db
+*.db-wal
+*.db-shm
+.env
+web/node_modules
+web/dist
+**/.DS_Store

@@ -1,0 +1,19 @@
+# Runtime data (SQLite DB + encrypted uploads)
+/data/
+*.db
+*.db-wal
+*.db-shm
+
+# Local env
+.env
+
+# Built binary
+/rackd
+
+# Frontend
+web/node_modules/
+# Built SPA assets are generated; only the placeholder index.html is tracked.
+web/dist/assets/
+
+# OS
+.DS_Store

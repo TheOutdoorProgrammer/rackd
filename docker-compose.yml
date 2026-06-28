@@ -1,0 +1,16 @@
+services:
+  rackd:
+    image: ghcr.io/theoutdoorprogrammer/rackd:latest
+    container_name: rackd
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    volumes:
+      - rackd-data:/data
+    environment:
+      # RACKD_DEV=true relaxes the Secure cookie flag so auth works over plain
+      # http (local testing). Behind an HTTPS reverse proxy, set this to false.
+      RACKD_DEV: "true"
+
+volumes:
+  rackd-data:
