@@ -46,6 +46,7 @@ const knifeSteelOptions = list([
   'AUS-8', 'AUS-10', '14C28N', '8Cr13MoV', 'Nitro-V', '1095', '5160', 'A2', 'O1', 'Elmax', 'K390',
   'LC200N', 'ZDP-189', 'Maxamet',
 ])
+const shellLengthOptions = list(['2½"', '2¾"', '3"', '3½"'])
 
 export const RESOURCE_KEYS = ['firearms', 'ammo', 'knives', 'accessories'] as const
 
@@ -85,6 +86,7 @@ export const RESOURCES: Record<string, ResourceConfig> = {
       { name: 'caliber', label: 'Caliber', type: 'combo', options: caliberOptions },
       { name: 'brand', label: 'Brand', type: 'combo', options: ammoBrandOptions },
       { name: 'bulletType', label: 'Bullet type', type: 'select', options: opts(['FMJ', 'JHP', 'HP', 'SP', 'match', 'birdshot', 'buckshot', 'slug', 'other']) },
+      { name: 'shellLength', label: 'Shell length', type: 'combo', options: shellLengthOptions },
       { name: 'grainWeight', label: 'Grain weight', type: 'number' },
       { name: 'quantityOnHand', label: 'Rounds on hand', type: 'number' },
       { name: 'lotNumber', label: 'Lot number' },
@@ -94,7 +96,7 @@ export const RESOURCES: Record<string, ResourceConfig> = {
       { name: 'notes', label: 'Notes', type: 'textarea' },
     ],
     title: (a) => a.name || a.caliber || 'Ammo',
-    subtitle: (a) => [a.caliber, a.bulletType, a.grainWeight ? `${a.grainWeight}gr` : '', a.quantityOnHand ? `${a.quantityOnHand} rds` : ''].filter(Boolean).join(' · '),
+    subtitle: (a) => [a.caliber, a.shellLength, a.bulletType, a.grainWeight ? `${a.grainWeight}gr` : '', a.quantityOnHand ? `${a.quantityOnHand} rds` : ''].filter(Boolean).join(' · '),
   },
   knives: {
     key: 'knives',

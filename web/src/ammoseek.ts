@@ -29,11 +29,13 @@ export const COMMON_CALIBERS: CaliberOption[] = [
   { label: '7.62x51mm NATO', slug: '308-winchester' },
   { label: '7.62x39mm', slug: '7.62x39mm' },
   { label: '.300 Blackout', slug: '300aac-blackout' },
+  { label: '.350 Legend', slug: '350-legend' },
   { label: '6.5 Creedmoor', slug: '6.5mm-creedmoor' },
   { label: '.30-06 Springfield', slug: '30-06' },
   { label: '.270 Winchester', slug: '270-winchester' },
   { label: '12 Gauge', slug: '12-gauge' },
   { label: '20 Gauge', slug: '20-gauge' },
+  { label: '.410 Bore', slug: '410-bore' },
 ]
 
 const SLUGS: Record<string, string> = {}
@@ -77,6 +79,13 @@ const ALIASES: Record<string, string> = {
   '12 ga': '12-gauge',
   '20ga': '20-gauge',
   '20 ga': '20-gauge',
+  '350 legend': '350-legend',
+  '.350 legend': '350-legend',
+  '350': '350-legend',
+  '410': '410-bore',
+  '.410': '410-bore',
+  '410 bore': '410-bore',
+  '410ga': '410-bore',
 }
 
 const normalize = (caliber: string) => caliber.trim().toLowerCase().replace(/\s+/g, ' ')

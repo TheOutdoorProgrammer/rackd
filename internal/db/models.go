@@ -31,7 +31,8 @@ type Ammo struct {
 	Name               string `json:"name"`
 	Caliber            string `json:"caliber"`
 	Brand              string `json:"brand"`
-	BulletType         string `json:"bulletType"` // FMJ | JHP | HP | SP | match | birdshot | buckshot | slug | other
+	BulletType         string `json:"bulletType"`  // FMJ | JHP | HP | SP | match | birdshot | buckshot | slug | other
+	ShellLength        string `json:"shellLength"` // shotshells: 2½" | 2¾" | 3" | 3½"
 	GrainWeight        int64  `json:"grainWeight"`
 	QuantityOnHand     int64  `json:"quantityOnHand"`
 	LotNumber          string `json:"lotNumber"`
