@@ -3,19 +3,12 @@ package api
 import (
 	"errors"
 	"net/http"
-	"strconv"
 
 	"github.com/TheOutdoorProgrammer/boating-accident/internal/db"
 )
 
-func (s *Server) handleListAccessories(w http.ResponseWriter, r *http.Request) {
-	var firearmID *int64
-	if q := r.URL.Query().Get("firearmId"); q != "" {
-		if v, err := strconv.ParseInt(q, 10, 64); err == nil {
-			firearmID = &v
-		}
-	}
-	items, err := s.store.ListAccessories(firearmID)
+func (s *Server) handleListAccessories(w http.ResponseWriter, _ *http.Request) {
+	items, err := s.store.ListAccessories()
 	if err != nil {
 		serverError(w, err)
 		return
@@ -98,4 +91,19 @@ func (s *Server) handleDeleteAccessory(w http.ResponseWriter, r *http.Request) {
 	default:
 		w.WriteHeader(http.StatusNoContent)
 	}
+}
+
+// handleListAccessoryFirearms lists the firearms an accessory is mounted on.
+func (s *Server) handleListAccessoryFirearms(w http.ResponseWriter, r *http.Request) {
+	id, err := parseID(r, "id")
+	if err != nil {
+		writeError(w, http.StatusBadRequest, "invalid id")
+		return
+	}
+	items, err := s.store.ListFirearmsForAccessory(id)
+	if err != nil {
+		serverError(w, err)
+		return
+	}
+	writeJSON(w, http.StatusOK, items)
 }

@@ -49,18 +49,3 @@ func checkAffected(res sql.Result) error {
 	}
 	return nil
 }
-
-func nullInt(p *int64) any {
-	if p == nil {
-		return nil
-	}
-	return *p
-}
-
-func ptrFromNullInt(n sql.NullInt64) *int64 {
-	if !n.Valid {
-		return nil
-	}
-	v := n.Int64
-	return &v
-}

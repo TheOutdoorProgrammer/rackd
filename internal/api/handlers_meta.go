@@ -29,7 +29,7 @@ func (s *Server) handleSummary(w http.ResponseWriter, _ *http.Request) {
 		serverError(w, err)
 		return
 	}
-	accessories, err := s.store.ListAccessories(nil)
+	accessories, err := s.store.ListAccessories()
 	if err != nil {
 		serverError(w, err)
 		return
@@ -93,7 +93,7 @@ func (s *Server) handleSearch(w http.ResponseWriter, r *http.Request) {
 		serverError(w, err)
 		return
 	}
-	accessories, err := s.store.ListAccessories(nil)
+	accessories, err := s.store.ListAccessories()
 	if err != nil {
 		serverError(w, err)
 		return

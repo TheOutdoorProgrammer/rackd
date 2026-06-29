@@ -8,7 +8,7 @@ import AmmoLinks from '../components/AmmoLinks'
 import FirearmAccessories from '../components/FirearmAccessories'
 import AmmoStock from '../components/AmmoStock'
 import AmmoFirearms from '../components/AmmoFirearms'
-import FirearmRefCard from '../components/FirearmRefCard'
+import AccessoryFirearms from '../components/AccessoryFirearms'
 import AmmoSeekButton from '../components/AmmoSeekButton'
 import type { Ammo, Item } from '../types'
 
@@ -88,7 +88,7 @@ export default function ResourceDetail() {
         </>
       )}
       {cfg.key === 'ammo' && <AmmoFirearms ammoId={Number(id)} />}
-      {cfg.key === 'accessories' && item.firearmId != null && <FirearmRefCard firearmId={Number(item.firearmId)} />}
+      {cfg.key === 'accessories' && <AccessoryFirearms accessoryId={Number(id)} quantity={Number(item.quantity) || 0} />}
 
       {/* External links always sit at the very bottom. */}
       {cfg.key === 'firearms' && item.caliber && (

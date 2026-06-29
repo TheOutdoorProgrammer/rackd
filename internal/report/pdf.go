@@ -14,11 +14,12 @@ import (
 
 // Data is everything the report needs, already decrypted by the caller.
 type Data struct {
-	Firearms    []db.Firearm
-	Ammo        []db.Ammo
-	Knives      []db.Knife
-	Accessories []db.Accessory
-	Generated   time.Time
+	Firearms          []db.Firearm
+	Ammo              []db.Ammo
+	Knives            []db.Knife
+	Accessories       []db.Accessory
+	AccessoryFirearms map[int64][]int64 // accessory id -> firearm ids it's mounted on
+	Generated         time.Time
 }
 
 // Build renders the inventory to a PDF document.
@@ -162,21 +163,21 @@ func Build(d Data) ([]byte, error) {
 	if len(d.Accessories) > 0 {
 		section("Accessories")
 		w := []float64{46, 28, 36, 35, 26}
-		header([]string{"Name", "Category", "Maker", "On gun", "Value"}, w)
+		header([]string{"Name", "Category", "Maker", "On guns", "Value"}, w)
 		for _, a := range d.Accessories {
-			gun := ""
-			if a.FirearmID != nil {
-				if f, ok := byID[*a.FirearmID]; ok {
-					gun = firearmName(f)
+			names := make([]string, 0, len(d.AccessoryFirearms[a.ID]))
+			for _, fid := range d.AccessoryFirearms[a.ID] {
+				if f, ok := byID[fid]; ok {
+					names = append(names, firearmName(f))
 				} else {
-					gun = fmt.Sprintf("#%d", *a.FirearmID)
+					names = append(names, fmt.Sprintf("#%d", fid))
 				}
 			}
 			row([]string{
 				a.Name,
 				titleCase(a.Category),
 				a.Manufacturer,
-				gun,
+				strings.Join(names, ", "),
 				money(a.ValueCents),
 			}, w)
 		}

@@ -9,13 +9,13 @@ import (
 )
 
 func TestBuild(t *testing.T) {
-	fid := int64(1)
 	d := Data{
-		Firearms:    []db.Firearm{{ID: 1, Nickname: "Truck Gun", Manufacturer: "Ruger", Model: "10/22", Caliber: ".22 LR", SerialNumber: "ABC123", Status: "owned", AcquiredPriceCents: 24999}},
-		Ammo:        []db.Ammo{{ID: 1, Name: "Plinking", Caliber: ".22 LR", BulletType: "LRN", QuantityOnHand: 50, LowStockThreshold: 100, AcquiredPriceCents: 1999}},
-		Knives:      []db.Knife{{ID: 1, Nickname: "EDC", Type: "folding", Manufacturer: "Benchmade", BladeSteel: "CPM MagnaCut", AcquiredPriceCents: 18000}},
-		Accessories: []db.Accessory{{ID: 1, Name: "Red Dot", Category: "optic", Manufacturer: "Holosun", ValueCents: 30000, FirearmID: &fid}},
-		Generated:   time.Unix(0, 0).UTC(),
+		Firearms:          []db.Firearm{{ID: 1, Nickname: "Truck Gun", Manufacturer: "Ruger", Model: "10/22", Caliber: ".22 LR", SerialNumber: "ABC123", Status: "owned", AcquiredPriceCents: 24999}},
+		Ammo:              []db.Ammo{{ID: 1, Name: "Plinking", Caliber: ".22 LR", BulletType: "LRN", QuantityOnHand: 50, LowStockThreshold: 100, AcquiredPriceCents: 1999}},
+		Knives:            []db.Knife{{ID: 1, Nickname: "EDC", Type: "folding", Manufacturer: "Benchmade", BladeSteel: "CPM MagnaCut", AcquiredPriceCents: 18000}},
+		Accessories:       []db.Accessory{{ID: 1, Name: "Red Dot", Category: "optic", Manufacturer: "Holosun", ValueCents: 30000}},
+		AccessoryFirearms: map[int64][]int64{1: {1}},
+		Generated:         time.Unix(0, 0).UTC(),
 	}
 	out, err := Build(d)
 	if err != nil {

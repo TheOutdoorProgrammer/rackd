@@ -151,3 +151,63 @@ func (s *Server) handleUnlinkAmmo(w http.ResponseWriter, r *http.Request) {
 		writeJSON(w, http.StatusOK, map[string]bool{"ok": true})
 	}
 }
+
+// --- accessory mounts (routed under /firearms/{id}/accessories) ---
+
+func (s *Server) handleListFirearmAccessories(w http.ResponseWriter, r *http.Request) {
+	id, err := parseID(r, "id")
+	if err != nil {
+		writeError(w, http.StatusBadRequest, "invalid id")
+		return
+	}
+	items, err := s.store.ListAccessoriesForFirearm(id)
+	if err != nil {
+		serverError(w, err)
+		return
+	}
+	writeJSON(w, http.StatusOK, items)
+}
+
+func (s *Server) handleLinkAccessory(w http.ResponseWriter, r *http.Request) {
+	fid, err := parseID(r, "id")
+	if err != nil {
+		writeError(w, http.StatusBadRequest, "invalid id")
+		return
+	}
+	aid, err := parseID(r, "accID")
+	if err != nil {
+		writeError(w, http.StatusBadRequest, "invalid accessory id")
+		return
+	}
+	switch err := s.store.LinkAccessory(fid, aid); {
+	case errors.Is(err, db.ErrNotFound):
+		writeError(w, http.StatusNotFound, "not found")
+	case errors.Is(err, db.ErrAtCapacity):
+		writeError(w, http.StatusConflict, "accessory quantity is fully assigned")
+	case err != nil:
+		serverError(w, err)
+	default:
+		writeJSON(w, http.StatusOK, map[string]bool{"ok": true})
+	}
+}
+
+func (s *Server) handleUnlinkAccessory(w http.ResponseWriter, r *http.Request) {
+	fid, err := parseID(r, "id")
+	if err != nil {
+		writeError(w, http.StatusBadRequest, "invalid id")
+		return
+	}
+	aid, err := parseID(r, "accID")
+	if err != nil {
+		writeError(w, http.StatusBadRequest, "invalid accessory id")
+		return
+	}
+	switch err := s.store.UnlinkAccessory(fid, aid); {
+	case errors.Is(err, db.ErrNotFound):
+		writeError(w, http.StatusNotFound, "not found")
+	case err != nil:
+		serverError(w, err)
+	default:
+		writeJSON(w, http.StatusOK, map[string]bool{"ok": true})
+	}
+}

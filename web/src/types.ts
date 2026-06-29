@@ -64,7 +64,6 @@ export interface Knife {
 
 export interface Accessory {
   id: number
-  firearmId: number | null
   name: string
   category: string
   manufacturer: string

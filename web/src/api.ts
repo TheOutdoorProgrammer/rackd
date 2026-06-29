@@ -67,9 +67,15 @@ export const adjustAmmo = (id: number, delta: number) =>
 export const listFirearmsForAmmo = (ammoId: number) =>
   req<Firearm[]>(`/api/ammo/${ammoId}/firearms`)
 
-// --- accessories (reverse lookup: which accessories hang off a firearm) ---
+// --- accessory ↔ firearm mounts (many-to-many, capped at the accessory's quantity) ---
 export const listAccessoriesForFirearm = (firearmId: number) =>
-  req<Accessory[]>(`/api/accessories?firearmId=${firearmId}`)
+  req<Accessory[]>(`/api/firearms/${firearmId}/accessories`)
+export const listFirearmsForAccessory = (accessoryId: number) =>
+  req<Firearm[]>(`/api/accessories/${accessoryId}/firearms`)
+export const linkAccessory = (firearmId: number, accessoryId: number) =>
+  req<void>(`/api/firearms/${firearmId}/accessories/${accessoryId}`, { method: 'PUT' })
+export const unlinkAccessory = (firearmId: number, accessoryId: number) =>
+  req<void>(`/api/firearms/${firearmId}/accessories/${accessoryId}`, { method: 'DELETE' })
 
 // --- meta ---
 export const getSummary = () => req<Summary>('/api/summary')

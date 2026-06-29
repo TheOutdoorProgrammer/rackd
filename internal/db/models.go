@@ -67,11 +67,10 @@ type Knife struct {
 	UpdatedAt          string `json:"updatedAt"`
 }
 
-// Accessory optionally hangs off a firearm (firearm_id is a plaintext column so
-// the relationship survives encryption).
+// Accessory can be mounted on multiple firearms (many-to-many via the
+// firearm_accessory join table), capped at its quantity on hand.
 type Accessory struct {
 	ID           int64  `json:"id"`
-	FirearmID    *int64 `json:"firearmId"`
 	Name         string `json:"name"`
 	Category     string `json:"category"` // optic | light | laser | sling | magazine | trigger | stock | choke | case | cleaning | other
 	Manufacturer string `json:"manufacturer"`

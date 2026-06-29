@@ -72,6 +72,9 @@ func (s *Server) routes() http.Handler {
 					r.Get("/ammo", s.handleListFirearmAmmo)
 					r.Put("/ammo/{ammoID}", s.handleLinkAmmo)
 					r.Delete("/ammo/{ammoID}", s.handleUnlinkAmmo)
+					r.Get("/accessories", s.handleListFirearmAccessories)
+					r.Put("/accessories/{accID}", s.handleLinkAccessory)
+					r.Delete("/accessories/{accID}", s.handleUnlinkAccessory)
 				})
 			})
 
@@ -98,12 +101,13 @@ func (s *Server) routes() http.Handler {
 			})
 
 			r.Route("/accessories", func(r chi.Router) {
-				r.Get("/", s.handleListAccessories) // optional ?firearmId=
+				r.Get("/", s.handleListAccessories)
 				r.Post("/", s.handleCreateAccessory)
 				r.Route("/{id}", func(r chi.Router) {
 					r.Get("/", s.handleGetAccessory)
 					r.Put("/", s.handleUpdateAccessory)
 					r.Delete("/", s.handleDeleteAccessory)
+					r.Get("/firearms", s.handleListAccessoryFirearms)
 				})
 			})
 

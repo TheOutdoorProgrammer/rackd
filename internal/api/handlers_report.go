@@ -25,7 +25,12 @@ func (s *Server) handleReport(w http.ResponseWriter, _ *http.Request) {
 		serverError(w, err)
 		return
 	}
-	accessories, err := s.store.ListAccessories(nil)
+	accessories, err := s.store.ListAccessories()
+	if err != nil {
+		serverError(w, err)
+		return
+	}
+	accessoryFirearms, err := s.store.AccessoryFirearmLinks()
 	if err != nil {
 		serverError(w, err)
 		return
@@ -33,11 +38,12 @@ func (s *Server) handleReport(w http.ResponseWriter, _ *http.Request) {
 
 	now := time.Now()
 	pdf, err := report.Build(report.Data{
-		Firearms:    firearms,
-		Ammo:        ammo,
-		Knives:      knives,
-		Accessories: accessories,
-		Generated:   now,
+		Firearms:          firearms,
+		Ammo:              ammo,
+		Knives:            knives,
+		Accessories:       accessories,
+		AccessoryFirearms: accessoryFirearms,
+		Generated:         now,
 	})
 	if err != nil {
 		serverError(w, err)

@@ -2,6 +2,7 @@ package db
 
 import (
 	"bytes"
+	"errors"
 	"path/filepath"
 	"testing"
 
@@ -89,5 +90,60 @@ func TestAmmoLinking(t *testing.T) {
 	}
 	if links, _ := s.ListAmmoForFirearm(f.ID); len(links) != 0 {
 		t.Fatalf("expected no links, got %d", len(links))
+	}
+}
+
+func TestAccessoryLinking(t *testing.T) {
+	s := newTestStore(t)
+
+	f1 := &Firearm{Nickname: "AR"}
+	f2 := &Firearm{Nickname: "AK"}
+	if err := s.CreateFirearm(f1); err != nil {
+		t.Fatal(err)
+	}
+	if err := s.CreateFirearm(f2); err != nil {
+		t.Fatal(err)
+	}
+	// Quantity 2 → mountable on two guns.
+	acc := &Accessory{Name: "Aimpoint", Category: "optic", Quantity: 2}
+	if err := s.CreateAccessory(acc); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := s.LinkAccessory(f1.ID, acc.ID); err != nil {
+		t.Fatalf("link f1: %v", err)
+	}
+	if err := s.LinkAccessory(f2.ID, acc.ID); err != nil {
+		t.Fatalf("link f2: %v", err)
+	}
+	// Re-linking the same gun is a no-op, not a capacity error.
+	if err := s.LinkAccessory(f1.ID, acc.ID); err != nil {
+		t.Fatalf("relink f1: %v", err)
+	}
+
+	firearms, err := s.ListFirearmsForAccessory(acc.ID)
+	if err != nil || len(firearms) != 2 {
+		t.Fatalf("firearms for accessory: %v / %+v", err, firearms)
+	}
+	accs, err := s.ListAccessoriesForFirearm(f1.ID)
+	if err != nil || len(accs) != 1 || accs[0].Name != "Aimpoint" {
+		t.Fatalf("accessories for firearm: %v / %+v", err, accs)
+	}
+
+	// A third gun exceeds the quantity of 2 → ErrAtCapacity.
+	f3 := &Firearm{Nickname: "Shotgun"}
+	if err := s.CreateFirearm(f3); err != nil {
+		t.Fatal(err)
+	}
+	if err := s.LinkAccessory(f3.ID, acc.ID); !errors.Is(err, ErrAtCapacity) {
+		t.Fatalf("expected ErrAtCapacity, got %v", err)
+	}
+
+	// Free a slot, then the third fits.
+	if err := s.UnlinkAccessory(f1.ID, acc.ID); err != nil {
+		t.Fatalf("unlink: %v", err)
+	}
+	if err := s.LinkAccessory(f3.ID, acc.ID); err != nil {
+		t.Fatalf("link f3 after freeing a slot: %v", err)
 	}
 }

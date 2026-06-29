@@ -142,7 +142,6 @@ export const RESOURCES: Record<string, ResourceConfig> = {
       { name: 'manufacturer', label: 'Manufacturer' },
       { name: 'model', label: 'Model' },
       { name: 'serialNumber', label: 'Serial number' },
-      { name: 'firearmId', label: 'On firearm', type: 'firearmRef' },
       { name: 'quantity', label: 'Quantity', type: 'number' },
       { name: 'valueCents', label: 'Value', type: 'money' },
       { name: 'acquiredFrom', label: 'Acquired from' },
