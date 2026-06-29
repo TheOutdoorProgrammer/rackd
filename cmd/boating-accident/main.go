@@ -55,13 +55,15 @@ func run() error {
 	specsClient := specs.New()
 
 	sessions := scs.New() // in-memory store: sessions die on restart, re-locking the vault
-	sessions.Lifetime = 12 * time.Hour
-	sessions.IdleTimeout = time.Hour
+	sessions.Lifetime = cfg.SessionLifetime
+	sessions.IdleTimeout = cfg.SessionIdle
 	sessions.Cookie.Name = "boating-accident_session"
 	sessions.Cookie.HttpOnly = true
 	sessions.Cookie.SameSite = http.SameSiteLaxMode
 	sessions.Cookie.Secure = !cfg.Dev
-	sessions.Cookie.Persist = false
+	// Persistent cookie so a quick app-switch on mobile (Safari discards no-expiry
+	// session cookies aggressively) doesn't drop the session before it idles out.
+	sessions.Cookie.Persist = true
 
 	httpServer := &http.Server{
 		Addr:              cfg.Addr,
