@@ -14,25 +14,31 @@ import ErrorBoundary from './components/ErrorBoundary'
 
 export default function App() {
   const [status, setStatus] = useState<Status | null>(null)
+  // reauth is set when an authenticated request 401s while the app is open — the
+  // session expired or the vault re-locked. We overlay the PIN screen instead of
+  // tearing the app down, so whatever form you were filling out survives the
+  // re-unlock (no plaintext is ever persisted to do this — the data just stays in
+  // memory behind the overlay).
+  const [reauth, setReauth] = useState(false)
   const refresh = () => getStatus().then(setStatus).catch(() => setStatus(null))
 
   useEffect(() => {
-    // A 401 mid-session means the vault locked (session expiry or a server
-    // restart) — flip back to the PIN screen instead of leaving a broken page.
-    setUnauthorizedHandler(() => setStatus((s) => (s ? { ...s, unlocked: false } : s)))
+    setUnauthorizedHandler(() => setReauth(true))
     void refresh()
   }, [])
 
   if (status === null) {
     return <div className="flex min-h-dvh items-center justify-center text-dracula-comment">Loading…</div>
   }
+
+  // First run, or a fresh load that was never unlocked: take the whole screen.
   if (!status.unlocked) {
-    return <UnlockScreen status={status} onUnlocked={refresh} />
+    return <UnlockScreen status={status} onUnlocked={() => { setReauth(false); refresh() }} />
   }
 
   return (
     <BrowserRouter>
-      <AppShell onLock={async () => { await lockVault(); await refresh() }}>
+      <AppShell onLock={async () => { setReauth(false); await lockVault(); await refresh() }}>
         <ErrorBoundary>
         <Routes>
           <Route path="/" element={<Dashboard />} />
@@ -46,6 +52,16 @@ export default function App() {
         </Routes>
         </ErrorBoundary>
       </AppShell>
+      {/* Session expired mid-use: re-unlock over the live app so the form you were
+          filling is still there when you come back — just hit Save again. */}
+      {reauth && (
+        <div className="fixed inset-0 z-50 bg-dracula-bg">
+          <UnlockScreen
+            status={{ initialized: true, unlocked: false }}
+            onUnlocked={() => { setReauth(false); void refresh() }}
+          />
+        </div>
+      )}
     </BrowserRouter>
   )
 }
