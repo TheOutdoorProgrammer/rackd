@@ -18,7 +18,7 @@ function formatValue(f: Field, v: any): string {
   if (f.type === 'money') return v ? money(v) : ''
   if (f.type === 'number') return v ? String(v) : ''
   if (f.type === 'bool') return v ? 'Yes' : ''
-  if (f.type === 'select') return titleCase(String(v))
+  if (f.type === 'select') return f.options?.find((o) => o.value === v)?.label ?? titleCase(String(v))
   return String(v)
 }
 
