@@ -19,6 +19,9 @@ export interface ResourceConfig {
   fields: Field[]
   title: (item: any) => string
   subtitle: (item: any) => string
+  // Optional line shown only in the list view, before the subtitle. Surfaces
+  // manufacturer/model when a nickname has taken their place in the title.
+  listLead?: (item: any) => string
 }
 
 const opts = (vals: string[]) => vals.map((v) => ({ value: v, label: v ? titleCase(v) : '—' }))
@@ -78,6 +81,7 @@ export const RESOURCES: Record<string, ResourceConfig> = {
     title: (f) => f.nickname || [f.manufacturer, f.model].filter(Boolean).join(' ') || 'Firearm',
     subtitle: (f) =>
       [f.shellLengths?.length ? `${f.caliber} (${f.shellLengths.join(', ')})` : f.caliber, f.kind].filter(Boolean).join(' · '),
+    listLead: (f) => (f.nickname ? [f.manufacturer, f.model].filter(Boolean).join(' ') : ''),
   },
   ammo: {
     key: 'ammo',
@@ -125,6 +129,7 @@ export const RESOURCES: Record<string, ResourceConfig> = {
     ],
     title: (k) => k.nickname || [k.manufacturer, k.model].filter(Boolean).join(' ') || 'Knife',
     subtitle: (k) => [titleCase(k.type), k.bladeSteel].filter(Boolean).join(' · '),
+    listLead: (k) => (k.nickname ? [k.manufacturer, k.model].filter(Boolean).join(' ') : ''),
   },
   accessories: {
     key: 'accessories',

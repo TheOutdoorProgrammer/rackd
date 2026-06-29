@@ -48,7 +48,7 @@ export default function ResourceList() {
                       <span className="shrink-0 rounded-full bg-dracula-red/20 px-2 py-0.5 text-xs font-medium text-dracula-red">Low</span>
                     )}
                   </div>
-                  <div className="truncate text-sm text-dracula-comment">{cfg.subtitle(it) || '—'}</div>
+                  <div className="truncate text-sm text-dracula-comment">{[cfg.listLead?.(it), cfg.subtitle(it)].filter(Boolean).join(' · ') || '—'}</div>
                 </div>
               </Link>
             </li>
