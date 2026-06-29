@@ -1,5 +1,6 @@
 import { type ChangeEvent, useEffect, useRef, useState } from 'react'
 import { deletePhoto, listPhotos, photoURL, rotatePhoto, setCover, thumbURL, uploadPhoto } from '../api'
+import { prepareImageUpload } from '../images'
 import type { Attachment } from '../types'
 
 export default function PhotoManager({ owner, id }: { owner: string; id: number }) {
@@ -18,14 +19,7 @@ export default function PhotoManager({ owner, id }: { owner: string; id: number 
     setBusy(true)
     setErr(null)
     try {
-      let blob: Blob = file
-      let name = file.name
-      // iPhone HEIC/HEIF → convert to JPEG client-side (server stays CGO-free).
-      if (/heic|heif/i.test(file.type) || /\.hei[cf]$/i.test(file.name)) {
-        const heic2any = (await import('heic2any')).default
-        blob = (await heic2any({ blob: file, toType: 'image/jpeg', quality: 0.9 })) as Blob
-        name = name.replace(/\.\w+$/, '.jpg')
-      }
+      const { blob, name } = await prepareImageUpload(file)
       await uploadPhoto(owner, id, blob, name)
       await refresh()
     } catch (e2) {

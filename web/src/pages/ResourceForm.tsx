@@ -1,9 +1,10 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { Navigate, useNavigate, useParams } from 'react-router-dom'
-import { createItem, getItem, listItems, updateItem } from '../api'
+import { createItem, getItem, listItems, updateItem, uploadPhoto } from '../api'
 import { RESOURCES, type Field, type ResourceConfig } from '../resources'
 import { centsToDollars, dollarsToCents } from '../format'
 import SpecLookup from '../components/SpecLookup'
+import PhotoStager, { type StagedPhoto } from '../components/PhotoStager'
 import type { Firearm, Item } from '../types'
 
 // A <select> renders its first <option> but never fires onChange until tapped,
@@ -41,6 +42,22 @@ function buildPayload(cfg: ResourceConfig, values: Record<string, any>): Record<
   return p
 }
 
+// uploadStaged best-effort uploads photos staged on the New form to a just-created
+// item. It deliberately never throws: the item already exists, so a failed photo
+// must not bubble up and tempt a re-submit (that would create a duplicate item).
+// Returns how many uploads failed.
+async function uploadStaged(resource: string, id: number, staged: StagedPhoto[]): Promise<number> {
+  let failed = 0
+  for (const p of staged) {
+    try {
+      await uploadPhoto(resource, id, p.blob, p.name)
+    } catch {
+      failed++
+    }
+  }
+  return failed
+}
+
 export default function ResourceForm() {
   const { resource, id } = useParams()
   const cfg = resource ? RESOURCES[resource] : undefined
@@ -48,6 +65,7 @@ export default function ResourceForm() {
   const nav = useNavigate()
   const [values, setValues] = useState<Record<string, any>>({})
   const [firearms, setFirearms] = useState<Firearm[]>([])
+  const [staged, setStaged] = useState<StagedPhoto[]>([])
   const [busy, setBusy] = useState(false)
   const [err, setErr] = useState<string | null>(null)
 
@@ -71,8 +89,26 @@ export default function ResourceForm() {
     setErr(null)
     try {
       const payload = buildPayload(cfg, values)
-      if (editing && id) await updateItem(resource!, Number(id), payload)
-      else await createItem(resource!, payload)
+      if (editing && id) {
+        await updateItem(resource!, Number(id), payload)
+        nav(`/${resource}`)
+        return
+      }
+      // New item: create it first (photos attach by id), then upload any staged
+      // photos against the new record. Land on its detail page afterward so the
+      // photos are visible — and recoverable there if an upload failed.
+      const created = await createItem<Item>(resource!, payload)
+      if (staged.length > 0) {
+        const failed = await uploadStaged(resource!, created.id, staged)
+        if (failed > 0) {
+          alert(
+            `Saved, but ${failed} photo${failed === 1 ? '' : 's'} couldn't be uploaded. ` +
+              `You can add ${failed === 1 ? 'it' : 'them'} from the item's page.`,
+          )
+        }
+        nav(`/${resource}/${created.id}`)
+        return
+      }
       nav(`/${resource}`)
     } catch (e2) {
       setErr(e2 instanceof Error ? e2.message : 'Save failed')
@@ -93,6 +129,13 @@ export default function ResourceForm() {
         .map((f) => (
           <FieldInput key={f.name} field={f} value={values[f.name]} firearms={firearms} onChange={(v) => set(f.name, v)} />
         ))}
+      {/* Photos can be attached straight from the New form. On Edit they're managed
+          on the item's detail page, where the record already exists. */}
+      {!editing && (
+        <div className="rounded-2xl border border-dracula-current p-4">
+          <PhotoStager photos={staged} onChange={setStaged} />
+        </div>
+      )}
       {err && <p className="text-sm text-dracula-red">{err}</p>}
       <div className="flex gap-2 pt-2">
         <button type="submit" disabled={busy} className="rounded-lg bg-dracula-purple px-4 py-2 font-medium text-dracula-bg disabled:opacity-50">
