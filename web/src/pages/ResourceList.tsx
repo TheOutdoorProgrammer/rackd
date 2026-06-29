@@ -12,7 +12,15 @@ export default function ResourceList() {
 
   useEffect(() => {
     if (resource && RESOURCES[resource]) {
-      listItems<Item>(resource).then(setItems).catch(() => setItems([]))
+      const c = RESOURCES[resource]
+      // Names are encrypted at rest, so the server returns rows in id order; sort
+      // by the displayed title here. numeric+base = case-insensitive, natural order
+      // ("Glock 19" before "Glock 21").
+      listItems<Item>(resource)
+        .then((rows) =>
+          setItems([...rows].sort((a, b) => c.title(a).localeCompare(c.title(b), undefined, { numeric: true, sensitivity: 'base' }))),
+        )
+        .catch(() => setItems([]))
     }
   }, [resource])
 
