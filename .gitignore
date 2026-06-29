@@ -7,6 +7,9 @@
 # Local env
 .env
 
+# Local planning docs — kept out of the public repo
+PLAN.md
+
 # Built binary
 /boating-accident
 
