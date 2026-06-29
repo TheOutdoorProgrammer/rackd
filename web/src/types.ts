@@ -30,6 +30,9 @@ export interface Ammo {
   caliber: string
   brand: string
   bulletType: string
+  shellLength: string
+  shotSize: string
+  shotWeight: string
   grainWeight: number
   fps: number
   quantityOnHand: number

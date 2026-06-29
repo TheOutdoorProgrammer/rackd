@@ -51,6 +51,15 @@ const knifeSteelOptions = list([
   'LC200N', 'ZDP-189', 'Maxamet',
 ])
 const shellLengthOptions = list(['2½"', '2¾"', '3"', '3½"'])
+const shotSizeOptions = list([
+  '#9', '#8', '#7½', '#7', '#6', '#5', '#4', '#2', 'BB', 'BBB', 'T',
+  '#4 Buck', '#1 Buck', '#0 Buck', '#00 Buck', '#000 Buck',
+])
+const shotWeightOptions = list(['½ oz', '⅝ oz', '¾ oz', '⅞ oz', '1 oz', '1⅛ oz', '1¼ oz', '1⅜ oz', '1½ oz', '1⅝ oz', '1¾ oz', '2 oz'])
+
+// Shot size/weight apply only to shotshell loads — by bullet type or a gauge/bore caliber.
+const isShotgunLoad = (a: any) =>
+  ['birdshot', 'buckshot', 'slug'].includes(a.bulletType) || /gauge|bore/i.test(a.caliber ?? '')
 
 export const RESOURCE_KEYS = ['firearms', 'ammo', 'knives', 'accessories'] as const
 
@@ -94,6 +103,8 @@ export const RESOURCES: Record<string, ResourceConfig> = {
       { name: 'brand', label: 'Brand', type: 'combo', options: ammoBrandOptions },
       { name: 'bulletType', label: 'Bullet type', type: 'select', options: opts(['FMJ', 'JHP', 'HP', 'SP', 'match', 'birdshot', 'buckshot', 'slug', 'other']) },
       { name: 'shellLength', label: 'Shell length', type: 'combo', options: shellLengthOptions },
+      { name: 'shotSize', label: 'Shot size', type: 'combo', options: shotSizeOptions, showIf: isShotgunLoad },
+      { name: 'shotWeight', label: 'Shot weight (oz)', type: 'combo', options: shotWeightOptions, showIf: isShotgunLoad },
       { name: 'grainWeight', label: 'Grain weight', type: 'number' },
       { name: 'fps', label: 'Muzzle velocity (FPS)', type: 'number' },
       { name: 'quantityOnHand', label: 'Rounds on hand', type: 'number' },
@@ -105,7 +116,7 @@ export const RESOURCES: Record<string, ResourceConfig> = {
       { name: 'notes', label: 'Notes', type: 'textarea' },
     ],
     title: (a) => a.name || a.caliber || 'Ammo',
-    subtitle: (a) => [a.caliber, a.shellLength, a.bulletType, a.grainWeight ? `${a.grainWeight}gr` : '', a.fps ? `${a.fps} fps` : '', a.quantityOnHand ? `${a.quantityOnHand} rds` : ''].filter(Boolean).join(' · '),
+    subtitle: (a) => [a.caliber, a.shellLength, a.bulletType, a.shotSize, a.shotWeight, a.grainWeight ? `${a.grainWeight}gr` : '', a.fps ? `${a.fps} fps` : '', a.quantityOnHand ? `${a.quantityOnHand} rds` : ''].filter(Boolean).join(' · '),
   },
   knives: {
     key: 'knives',

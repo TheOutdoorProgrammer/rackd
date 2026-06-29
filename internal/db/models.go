@@ -34,6 +34,8 @@ type Ammo struct {
 	Brand              string `json:"brand"`
 	BulletType         string `json:"bulletType"`  // FMJ | JHP | HP | SP | match | birdshot | buckshot | slug | other
 	ShellLength        string `json:"shellLength"` // shotshells: 2½" | 2¾" | 3" | 3½"
+	ShotSize           string `json:"shotSize"`    // shotshells: pellet size, e.g. #8, #00 Buck
+	ShotWeight         string `json:"shotWeight"`  // shotshells: payload weight, e.g. 1⅛ oz
 	GrainWeight        int64  `json:"grainWeight"`
 	FPS                int64  `json:"fps"` // advertised muzzle velocity, feet per second
 	QuantityOnHand     int64  `json:"quantityOnHand"`
