@@ -31,6 +31,7 @@ export interface Ammo {
   brand: string
   bulletType: string
   grainWeight: number
+  fps: number
   quantityOnHand: number
   lowStockThreshold: number
   lotNumber: string

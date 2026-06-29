@@ -91,6 +91,7 @@ export const RESOURCES: Record<string, ResourceConfig> = {
       { name: 'bulletType', label: 'Bullet type', type: 'select', options: opts(['FMJ', 'JHP', 'HP', 'SP', 'match', 'birdshot', 'buckshot', 'slug', 'other']) },
       { name: 'shellLength', label: 'Shell length', type: 'combo', options: shellLengthOptions },
       { name: 'grainWeight', label: 'Grain weight', type: 'number' },
+      { name: 'fps', label: 'Muzzle velocity (FPS)', type: 'number' },
       { name: 'quantityOnHand', label: 'Rounds on hand', type: 'number' },
       { name: 'lowStockThreshold', label: 'Low-stock alert (rds)', type: 'number' },
       { name: 'lotNumber', label: 'Lot number' },
@@ -100,7 +101,7 @@ export const RESOURCES: Record<string, ResourceConfig> = {
       { name: 'notes', label: 'Notes', type: 'textarea' },
     ],
     title: (a) => a.name || a.caliber || 'Ammo',
-    subtitle: (a) => [a.caliber, a.shellLength, a.bulletType, a.grainWeight ? `${a.grainWeight}gr` : '', a.quantityOnHand ? `${a.quantityOnHand} rds` : ''].filter(Boolean).join(' · '),
+    subtitle: (a) => [a.caliber, a.shellLength, a.bulletType, a.grainWeight ? `${a.grainWeight}gr` : '', a.fps ? `${a.fps} fps` : '', a.quantityOnHand ? `${a.quantityOnHand} rds` : ''].filter(Boolean).join(' · '),
   },
   knives: {
     key: 'knives',
